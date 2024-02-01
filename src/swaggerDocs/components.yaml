@@ -1,0 +1,22 @@
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          example: a4InR5cCI6IkpXV2ha3
+        username:
+          type: string
+          example: John
+        email:
+          type: string
+          example: john@email.com
+        password:
+          type: string
+          example: '12345'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
