@@ -1,8 +1,8 @@
 paths:
-  /user/login:
+  /auth/login:
     post:
       tags:
-        - userss
+        - Auth
       summary: ''
       description: Logs user into the system
       operationId: login
@@ -17,7 +17,7 @@ paths:
                   example: john@gmail.com
                 password:
                   type: string
-                  example: abc123
+                  example: Abc@1234
         required: true
       responses:
         '200':
@@ -30,9 +30,30 @@ paths:
                   message:
                     type: string
                     example: Login successfully
-                  access_token:
-                    type: string
-                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+                  data:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+                        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+                      user:
+                        type: object
+                        properties:
+                          username:
+                            type: string
+                            example: John
+                          email:
+                            type: string
+                            example: john@email.com
+                          avatarUrl:
+                            type: string
+                            example: ''
+                          createdAt:
+                            type: string
+                            example: ''
+                          updatedAt:
+                            type: string
+                            example: ''
         '500':
           description: Internal server error
           content:
@@ -40,9 +61,68 @@ paths:
               schema:
                 type: object
                 properties:
-                  status_code:
-                    type: number
-                    example: 500
+                  message:
+                    type: string
+                    example: Internal server error
+  /auth/signup:
+    post:
+      tags:
+        - Auth
+      summary: ''
+      description: Sign up into the system
+      operationId: signup
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: john
+                email:
+                  type: string
+                  example: john@gmail.com
+                password:
+                  type: string
+                  example: Abc@1234
+        required: true
+      responses:
+        '200':
+          description: Sign up successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User created successfully
+                  data:
+                    type: object
+                    properties:
+                      username:
+                        type: string
+                        example: John
+                      email:
+                        type: string
+                        example: john@email.com
+                      avatarUrl:
+                        type: string
+                        example: ''
+                      createdAt:
+                        type: string
+                        example: ''
+                      updatedAt:
+                        type: string
+                        example: ''
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
                   message:
                     type: string
                     example: Internal server error

@@ -7,10 +7,12 @@
     "esModuleInterop": true,
     "strict": true,
     "skipLibCheck": true,
-    "baseUrl": ".",
+    "baseUrl": "./src",
     "paths": {
-      "~/*": ["src/*"]
-    }
+      "@/*": ["*"]
+    },
+    "types": ["node"],
+    "typeRoots": ["./src/type.d.ts", "./node_modules/@types"]
   },
   "files": ["src/type.d.ts"],
   "include": ["src/**/*"]

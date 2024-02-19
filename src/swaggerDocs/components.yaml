@@ -4,8 +4,8 @@ components:
       type: object
       properties:
         id:
-          type: string
-          example: a4InR5cCI6IkpXV2ha3
+          type: number
+          example: 1
         username:
           type: string
           example: John
@@ -15,6 +15,18 @@ components:
         password:
           type: string
           example: '12345'
+        avatarUrl:
+          type: string
+          example: ''
+        createdAt:
+          type: string
+          example: ''
+        updateddAt:
+          type: string
+          example: ''
+        deletedAt:
+          type: string
+          example: ''
   securitySchemes:
     bearerAuth:
       type: http

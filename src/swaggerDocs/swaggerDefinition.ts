@@ -1,4 +1,4 @@
-import { SERVER_URL } from '../constants/server'
+import { DB_URL } from '../configs/secrets'
 
 export const swaggerDefinition = {
   openapi: '3.0.3',
@@ -8,13 +8,13 @@ export const swaggerDefinition = {
   },
   servers: [
     {
-      url: SERVER_URL
+      url: DB_URL
     }
   ],
   tags: [
     {
-      name: 'users',
-      description: 'APIs about Users'
+      name: 'Auth',
+      description: 'APIs about Auth'
     }
   ]
 }
