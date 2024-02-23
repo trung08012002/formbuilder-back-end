@@ -33,3 +33,22 @@ export const LoginSchema = z.object({
   email: emailValidation,
   password: passwordValidation
 })
+
+export const ChangePasswordSchema = z.object({
+  currentPassword: passwordValidation,
+  newPassword: passwordValidation
+})
+
+export const UpdateUserSchema = z.object({
+  email: emailValidation.optional(),
+  username: z
+    .string({ required_error: ERROR_MESSAGES.REQUIRED_USERNAME })
+    .trim()
+    .min(1, ERROR_MESSAGES.NO_EMPTY_USERNAME)
+    .optional(),
+  avatarUrl: z.string().optional(),
+  organizationName: z.string().optional(),
+  organizationLogo: z.string().optional()
+})
+
+export default UpdateUserSchema

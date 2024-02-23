@@ -126,3 +126,243 @@ paths:
                   message:
                     type: string
                     example: Internal server error
+  /users:
+    get:
+      tags:
+        - Users
+      summary: ''
+      description: Return a list of users
+      operationId: getUsers
+      security:
+        - bearerAuth:
+            - write:users
+            - read:users
+      responses:
+        '401':
+          description: Authentication information is missing or invalid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: No token provided
+        '200':
+          description: Return a list of users successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Get list of users successfully
+                  data:
+                    type: object
+                    properties:
+                      username:
+                        type: string
+                        example: John
+                      email:
+                        type: string
+                        example: john@email.com
+                      avatarUrl:
+                        type: string
+                        example: ''
+                      createdAt:
+                        type: string
+                        example: ''
+                      updatedAt:
+                        type: string
+                        example: ''
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Internal server error
+  /users/{id}:
+    get:
+      tags:
+        - Users
+      summary: ''
+      description: Returns a single user
+      operationId: getUsersByID
+      security:
+        - bearerAuth:
+            - write:users
+            - read:users
+      parameters:
+        - name: id
+          in: path
+          description: ID of user to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '401':
+          description: Authentication information is missing or invalid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: No token provided
+        '200':
+          description: Return a single user successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Get information of user successfully
+                  data:
+                    type: object
+                    properties:
+                      username:
+                        type: string
+                        example: John
+                      email:
+                        type: string
+                        example: john@email.com
+                      avatarUrl:
+                        type: string
+                        example: ''
+                      createdAt:
+                        type: string
+                        example: ''
+                      updatedAt:
+                        type: string
+                        example: ''
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Internal server error
+    patch:
+      tags:
+        - Users
+      summary: ''
+      description: Updates a user
+      operationId: updateUser
+      security:
+        - bearerAuth:
+            - write:users
+            - read:users
+      parameters:
+        - name: id
+          in: path
+          description: ID of user that needs to be updated
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: john@gmail.com
+                username:
+                  type: string
+                  example: john
+                avatarUrl:
+                  type: string
+                  example: ''
+                organizationName:
+                  type: string
+                  example: ''
+                organizationLogo:
+                  type: string
+                  example: ''
+        required: true
+      responses:
+        '400':
+          description: Invalid input
+    delete:
+      tags:
+        - Users
+      summary: ''
+      description: Deletes a user
+      operationId: deleteUser
+      security:
+        - bearerAuth:
+            - write:users
+            - read:users
+      parameters:
+        - name: id
+          in: path
+          description: User id to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '400':
+          description: Invalid user value
+  /users/{id}/change-password:
+    patch:
+      tags:
+        - Users
+      summary: ''
+      description: Updates password of a user
+      operationId: updatePassword
+      security:
+        - bearerAuth:
+            - write:users
+            - read:users
+      parameters:
+        - name: id
+          in: path
+          description: ID of user that needs to be updated password
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                currentPassword:
+                  type: string
+                  example: ''
+                newPassword:
+                  type: string
+                  example: ''
+        required: true
+      responses:
+        '400':
+          description: Invalid input
+
+components:
+  securitySchemes:
+    bearerAuth:
+      in: header
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      flows:
+        implicit:
+          scopes:
+            write:users: modify users in your account
+            read:users: read your users

@@ -1,12 +1,7 @@
 import { compareSync } from 'bcrypt'
 import { JWT_SECRET, JWT_TOKEN_DURATION } from '../configs/secrets'
 import * as jwt from 'jsonwebtoken'
-
-interface Payload {
-  userId: number
-  email: string
-  username: string
-}
+import type { Payload } from '../types/auth.types'
 
 export const comparePassword = (reqPassword: string, userPassword: string) => compareSync(reqPassword, userPassword)
 

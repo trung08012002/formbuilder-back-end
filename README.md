@@ -31,7 +31,7 @@ Navigate to `http://localhost:3000`
 ## Apply Prisma Migrations:
 
 ```bash
-    npx prisma migrate dev
+npx prisma migrate dev
 ```
 
 ## Getting TypeScript

@@ -15,6 +15,10 @@ export const swaggerDefinition = {
     {
       name: 'Auth',
       description: 'APIs about Auth'
+    },
+    {
+      name: 'Users',
+      description: 'APIs about Users'
     }
   ]
 }

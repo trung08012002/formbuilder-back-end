@@ -6,6 +6,7 @@ import { ERROR_MESSAGES, ROUTES } from './constants'
 import { PORT } from './configs/secrets'
 import { swaggerDefinition } from './swaggerDocs/swaggerDefinition'
 import authRoute from './routes/auth.routes'
+import usersRoute from './routes/users.routes'
 import { NOT_FOUND } from 'http-status'
 import { errorResponse } from './utils'
 
@@ -28,6 +29,8 @@ app.get('/', (req: Request, res: Response) => {
 })
 
 app.use('/auth', authRoute)
+
+app.use('/users', usersRoute)
 
 app.use((req: Request, res: Response) => {
   return errorResponse(res, ERROR_MESSAGES.NOT_FOUND_ROUTES, NOT_FOUND)
