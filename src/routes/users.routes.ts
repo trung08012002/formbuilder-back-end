@@ -1,19 +1,42 @@
-import { Router } from 'express'
+import { Router } from 'express';
+
+import { ROUTES } from '../constants';
 import {
-  changePasswordController,
-  delUserByIDController,
-  getAllUsersController,
-  getUserByIDController,
-  updateUserByIDController
-} from '../controllers/users.controllers'
-import { validateChangePasswordInput, validateUpdateUserInput, verifyToken } from '../middlewares'
+  getUsersController,
+  UsersController,
+} from '../controllers/users.controller';
+import {
+  validateChangePasswordInput,
+  validateUpdateUserInput,
+  verifyToken,
+} from '../middlewares';
 
-const usersRoute = Router()
+const usersRoute = Router();
 
-usersRoute.get('/', verifyToken, getAllUsersController)
-usersRoute.get('/:id', verifyToken, getUserByIDController)
-usersRoute.delete('/:id', verifyToken, delUserByIDController)
-usersRoute.patch('/:id/change-password', verifyToken, validateChangePasswordInput, changePasswordController)
-usersRoute.patch('/:id', verifyToken, validateUpdateUserInput, updateUserByIDController)
+const usersController: UsersController = getUsersController();
 
-export default usersRoute
+usersRoute.get(ROUTES.ROOT.PATH, verifyToken, usersController.getAllUsers);
+usersRoute.get(
+  ROUTES.USER.GET_USER_DETAILS,
+  verifyToken,
+  usersController.getUserByID,
+);
+usersRoute.delete(
+  ROUTES.USER.DELETE_USER,
+  verifyToken,
+  usersController.delUserByID,
+);
+usersRoute.patch(
+  ROUTES.USER.CHANGE_PASSWORD,
+  verifyToken,
+  validateChangePasswordInput,
+  usersController.changePassword,
+);
+usersRoute.patch(
+  ROUTES.USER.UPDATE_USER,
+  verifyToken,
+  validateUpdateUserInput,
+  usersController.updateUserByID,
+);
+
+export default usersRoute;

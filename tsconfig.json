@@ -9,11 +9,11 @@
     "skipLibCheck": true,
     "baseUrl": "./src",
     "paths": {
-      "@/*": ["*"]
+      "@/*": ["*"],
     },
     "types": ["node"],
-    "typeRoots": ["./src/type.d.ts", "./node_modules/@types"]
+    "typeRoots": ["./src/type.d.ts", "./node_modules/@types"],
   },
   "files": ["src/type.d.ts"],
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
 }

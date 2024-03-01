@@ -1,5 +1,6 @@
 export const ERROR_MESSAGES = {
-  USER_ALREADY_EXISTS: 'User with this email already exists. Please try another email',
+  USER_ALREADY_EXISTS:
+    'User with this email already exists. Please try another email',
   USER_NOT_FOUND: 'User does not exist',
   INCORRECT_INFORMATION: 'Incorrect email or password',
   INTERNAL_SERVER_ERROR: 'Internal Server Error',
@@ -18,8 +19,8 @@ export const ERROR_MESSAGES = {
   NO_EMPTY_USERNAME: 'Username cannot be empty',
   NOT_FOUND_ROUTES: 'No routes found',
   INCORRECT_PASSWORD: 'Password do not match',
-  DIFFERENT_PASSWORD: 'New password must be different'
-}
+  DIFFERENT_PASSWORD: 'New password must be different',
+};
 
 export const SUCCESS_MESSAGES = {
   USER_CREATED: 'User created successfully!',
@@ -28,5 +29,5 @@ export const SUCCESS_MESSAGES = {
   GET_USER: 'Get information of user successfully',
   DELETE_USER_SUCCESS: 'Delete user successfully',
   UPDATE_USER_SUCCESS: 'Update user successfully',
-  CHANGE_PW_SUCCESS: 'Change password successfully'
-}
+  CHANGE_PW_SUCCESS: 'Change password successfully',
+};

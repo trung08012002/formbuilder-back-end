@@ -1,2 +1,2 @@
-export * from './messages.constants'
-export * from './routes'
+export * from './messages.constants';
+export * from './routes.constants';

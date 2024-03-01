@@ -1,10 +1,22 @@
-import { LoginSchema, SignUpSchema, ChangePasswordSchema, UpdateUserSchema } from '../schemas/users.schemas'
-import { verifyToken } from './authorization.middlewares'
-import { validate } from './validation.middlewares'
+import {
+  ChangePasswordSchema,
+  LoginSchema,
+  SignUpSchema,
+  UpdateUserSchema,
+} from '../schemas/users.schemas';
 
-const validateSignUpInput = validate(SignUpSchema)
-const validateLoginInput = validate(LoginSchema)
-const validateChangePasswordInput = validate(ChangePasswordSchema)
-const validateUpdateUserInput = validate(UpdateUserSchema)
+import { verifyToken } from './authorization.middlewares';
+import { validate } from './validation.middlewares';
 
-export { verifyToken, validateSignUpInput, validateLoginInput, validateChangePasswordInput, validateUpdateUserInput }
+const validateSignUpInput = validate(SignUpSchema);
+const validateLoginInput = validate(LoginSchema);
+const validateChangePasswordInput = validate(ChangePasswordSchema);
+const validateUpdateUserInput = validate(UpdateUserSchema);
+
+export {
+  validateChangePasswordInput,
+  validateLoginInput,
+  validateSignUpInput,
+  validateUpdateUserInput,
+  verifyToken,
+};
