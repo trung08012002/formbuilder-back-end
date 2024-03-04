@@ -12,13 +12,11 @@ class ImageController {
         const filePath = req.file.path;
         const uploadResult = await cloudinary.uploader.upload(filePath);
 
-        return successResponse(res, {
-          message: IMAGE_SUCCESS_MESSAGES.UPLOAD_FILE_SUCCESS,
-          data: {
-            url: uploadResult.url,
-          },
-          status: status.OK,
-        });
+        return successResponse(
+          res,
+          { url: uploadResult.url },
+          IMAGE_SUCCESS_MESSAGES.UPLOAD_FILE_SUCCESS,
+        );
       } else {
         return errorResponse(res, IMAGE_ERROR_MESSAGES.NO_FILE_UPLOADED);
       }
