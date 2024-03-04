@@ -6,6 +6,7 @@ import swaggerUi from 'swagger-ui-express';
 
 import { PORT } from './configs/secrets';
 import authRoute from './routes/auth.routes';
+import imagesRoute from './routes/images.routes';
 import usersRoute from './routes/users.routes';
 import { swaggerDefinition } from './swaggerDocs/swaggerDefinition';
 import { ERROR_MESSAGES, ROUTES } from './constants';
@@ -36,6 +37,8 @@ app.get('/', (req: Request, res: Response) => {
 app.use(ROUTES.AUTH.PATH, authRoute);
 
 app.use(ROUTES.USER.PATH, usersRoute);
+
+app.use(ROUTES.IMAGE.PATH, imagesRoute);
 
 app.use((req: Request, res: Response) =>
   errorResponse(res, ERROR_MESSAGES.NOT_FOUND_ROUTES, NOT_FOUND),

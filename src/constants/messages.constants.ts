@@ -31,3 +31,12 @@ export const SUCCESS_MESSAGES = {
   UPDATE_USER_SUCCESS: 'Update user successfully',
   CHANGE_PW_SUCCESS: 'Change password successfully',
 };
+
+export const IMAGE_ERROR_MESSAGES = {
+  ERROR_UPLOADING_IMAGE: 'Error uploading image',
+  NO_FILE_UPLOADED: 'No file uploaded',
+};
+
+export const IMAGE_SUCCESS_MESSAGES = {
+  UPLOAD_FILE_SUCCESS: 'Upload file successfully',
+};

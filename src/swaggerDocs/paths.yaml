@@ -353,6 +353,56 @@ paths:
       responses:
         '400':
           description: Invalid input
+  /images/upload:
+    post:
+      tags:
+        - Images
+      summary: ''
+      description: Upload images
+      operationId: imagesUploader
+      security:
+        - bearerAuth:
+            - write:users
+            - read:users
+      requestBody:
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: Upload file successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Upload file successfully
+                      data:
+                        type: object
+                        properties:
+                          url:
+                            type: string
+                            example: ''
+                      status:
+                        type: number
+                        example: ''
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Internal server error
 
 components:
   securitySchemes:

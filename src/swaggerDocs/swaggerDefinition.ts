@@ -20,5 +20,8 @@ export const swaggerDefinition = {
       name: 'Users',
       description: 'APIs about Users',
     },
+    {
+      name: 'Images',
+    },
   ],
 };
