@@ -11,9 +11,9 @@ export const validate =
     } catch (error) {
       let err = error;
       if (err instanceof z.ZodError) {
-        err = err.issues.map((e) => ({ path: e.path[0], message: e.message }));
+        err = err.issues.map((e) => ({ path: e.path, message: e.message }));
       }
-      return res.status(status.CONFLICT).json({
+      return res.status(status.BAD_REQUEST).json({
         status: 'failed',
         error: err,
       });

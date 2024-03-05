@@ -54,4 +54,13 @@ export class UsersService {
         organizationLogo: user.organizationLogo,
       },
     });
+
+  public getFavouriteFormsOfUser = (userId: number) =>
+    prisma.user
+      .findUnique({
+        where: {
+          id: userId,
+        },
+      })
+      .favouriteForms();
 }

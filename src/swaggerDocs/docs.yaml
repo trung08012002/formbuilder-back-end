@@ -1,0 +1,998 @@
+paths:
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary: ''
+      description: Logs user into the system
+      operationId: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: john@gmail.com
+                password:
+                  type: string
+                  example: Abcd@1234
+        required: true
+      responses:
+        '200':
+          description: Login successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 200
+                  message:
+                    type: string
+                    example: Login successfully
+                  data:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+                        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+                      user:
+                        type: object
+                        properties:
+                          username:
+                            type: string
+                            example: John
+                          email:
+                            type: string
+                            example: john@email.com
+                          avatarUrl:
+                            type: string
+                            example: ''
+                          createdAt:
+                            type: string
+                            example: ''
+                          updatedAt:
+                            type: string
+                            example: ''
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 500
+                  message:
+                    type: string
+                    example: Internal server error
+  /auth/signup:
+    post:
+      tags:
+        - Auth
+      summary: ''
+      description: Sign up into the system
+      operationId: signup
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: john
+                email:
+                  type: string
+                  example: john@gmail.com
+                password:
+                  type: string
+                  example: Abcd@1234
+        required: true
+      responses:
+        '200':
+          description: Sign up successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 200
+                  message:
+                    type: string
+                    example: User created successfully
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        type: object
+                        properties:
+                          username:
+                            type: string
+                            example: John
+                          email:
+                            type: string
+                            example: john@email.com
+                          avatarUrl:
+                            type: string
+                            example: ''
+                          createdAt:
+                            type: string
+                            example: ''
+                          updatedAt:
+                            type: string
+                            example: ''
+                      token:
+                        type: string
+                        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImVtYWlsIjoiam9obkBnbWFpbC5jb20iLCJ1c2VybmFtZSI6ImpvaG4iLCJpYXQiOjE3MDkwMDgyMDcsImV4cCI6MTcwOTYxMzAwN30._yWtc-mBYb963IB8QdcZIRPyjYsdaEUEuuKwp1fQ2FA
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 500
+                  message:
+                    type: string
+                    example: Internal server error
+  /users:
+    get:
+      tags:
+        - Users
+      summary: ''
+      description: Return a list of users
+      operationId: getUsers
+      security:
+        - bearerAuth:
+            - write:users
+            - read:users
+      responses:
+        '401':
+          description: Authentication information is missing or invalid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: No token provided
+        '200':
+          description: Return a list of users successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Get list of users successfully
+                  data:
+                    type: object
+                    properties:
+                      username:
+                        type: string
+                        example: John
+                      email:
+                        type: string
+                        example: john@email.com
+                      avatarUrl:
+                        type: string
+                        example: ''
+                      createdAt:
+                        type: string
+                        example: ''
+                      updatedAt:
+                        type: string
+                        example: ''
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Internal server error
+  /users/{id}:
+    get:
+      tags:
+        - Users
+      summary: ''
+      description: Returns a single user
+      operationId: getUsersByID
+      security:
+        - bearerAuth:
+            - write:users
+            - read:users
+      parameters:
+        - name: id
+          in: path
+          description: ID of user to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '401':
+          description: Authentication information is missing or invalid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: No token provided
+        '200':
+          description: Return a single user successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Get information of user successfully
+                  data:
+                    type: object
+                    properties:
+                      username:
+                        type: string
+                        example: John
+                      email:
+                        type: string
+                        example: john@email.com
+                      avatarUrl:
+                        type: string
+                        example: ''
+                      createdAt:
+                        type: string
+                        example: ''
+                      updatedAt:
+                        type: string
+                        example: ''
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Internal server error
+    patch:
+      tags:
+        - Users
+      summary: ''
+      description: Updates a user
+      operationId: updateUser
+      security:
+        - bearerAuth:
+            - write:users
+            - read:users
+      parameters:
+        - name: id
+          in: path
+          description: ID of user that needs to be updated
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: john@gmail.com
+                username:
+                  type: string
+                  example: john
+                avatarUrl:
+                  type: string
+                  example: ''
+                organizationName:
+                  type: string
+                  example: ''
+                organizationLogo:
+                  type: string
+                  example: ''
+        required: true
+      responses:
+        '400':
+          description: Invalid input
+    delete:
+      tags:
+        - Users
+      summary: ''
+      description: Deletes a user
+      operationId: deleteUser
+      security:
+        - bearerAuth:
+            - write:users
+            - read:users
+      parameters:
+        - name: id
+          in: path
+          description: User id to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '400':
+          description: Invalid user value
+  /users/{id}/change-password:
+    patch:
+      tags:
+        - Users
+      summary: ''
+      description: Updates password of a user
+      operationId: updatePassword
+      security:
+        - bearerAuth:
+            - write:users
+            - read:users
+      parameters:
+        - name: id
+          in: path
+          description: ID of user that needs to be updated password
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                currentPassword:
+                  type: string
+                  example: ''
+                newPassword:
+                  type: string
+                  example: ''
+        required: true
+      responses:
+        '400':
+          description: Invalid input
+  /images/upload:
+    post:
+      tags:
+        - Images
+      summary: ''
+      description: Upload images
+      operationId: imagesUploader
+      security:
+        - bearerAuth:
+            - write:users
+            - read:users
+      requestBody:
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: Upload file successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      statusCode:
+                        type: number
+                        example: 200
+                      message:
+                        type: string
+                        example: Upload file successfully
+                      data:
+                        type: object
+                        properties:
+                          url:
+                            type: string
+                            example: 'http://res.cloudinary.com/cloud_name/image/v1647610701'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Internal server error
+  /forms:
+    get:
+      tags:
+        - Forms
+      summary: Get all my forms
+      operationId: getAllMyForms
+      security:
+        - bearerAuth:
+            - write:forms
+            - read:forms
+      parameters:
+        - name: page
+          in: query
+          required: true
+          schema:
+            type: number
+            default: 1
+        - name: pageSize
+          in: query
+          required: true
+          schema:
+            type: number
+            default: 10
+        - name: search
+          in: query
+          schema:
+            type: string
+            default: null
+        - name: isDeleted
+          in: query
+          schema:
+            type: number
+            default: 0
+            enum:
+              - 0
+              - 1
+        - name: isFavourite
+          in: query
+          schema:
+            type: number
+            default: 0
+            enum:
+              - 0
+              - 1
+        - name: sortField
+          in: query
+          schema:
+            type: string
+            default: createdAt
+            enum:
+              - title
+              - createdAt
+              - updatedAt
+        - name: sortDirection
+          in: query
+          schema:
+            type: string
+            default: desc
+            enum:
+              - asc
+              - desc
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 200
+                  message:
+                    type: string
+                    example: Success
+                  data:
+                    type: object
+                    properties:
+                      forms:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Form'
+                      page:
+                        type: number
+                        example: 1
+                      pageSize:
+                        type: number
+                        example: 10
+                      totalForms:
+                        type: number
+                        example: 1
+                      totalPages:
+                        type: number
+                        example: 1
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 500
+                  message:
+                    type: string
+                    example: Internal server error
+    post:
+      tags:
+        - Forms
+      summary: Create a form
+      operationId: createForm
+      security:
+        - bearerAuth:
+            - write:forms
+            - read:forms
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - title
+                - settings
+                - elements
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: Test
+                logoUrl:
+                  type: string
+                  example: null
+                settings:
+                  type: object
+                  properties:
+                    colors:
+                      type: object
+                      properties:
+                        fontColor:
+                          type: string
+                        formColor:
+                          type: string
+                        pageColor:
+                          type: string
+                        inputBackground:
+                          type: string
+                    styles:
+                      type: object
+                      properties:
+                        font:
+                          type: string
+                        fontSize:
+                          type: string
+                        formWidth:
+                          type: string
+                        questionSpacing:
+                          type: string
+                elements:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Element'
+                teamId:
+                  type: number
+                  example: 20
+        required: true
+      responses:
+        '201':
+          description: Created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 201
+                  message:
+                    type: string
+                    example: Form  created successfully
+                  data:
+                    $ref: '#/components/schemas/Form'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 500
+                  message:
+                    type: string
+                    example: Internal server error
+  /forms/{id}:
+    get:
+      tags:
+        - Forms
+      summary: Get a form by ID
+      operationId: getFormById
+      security:
+        - bearerAuth:
+            - write:forms
+            - read:forms
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+            example: 1
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 200
+                  message:
+                    type: string
+                    example: Success
+                  data:
+                    $ref: '#/components/schemas/Form'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 500
+                  message:
+                    type: string
+                    example: Internal server error
+    patch:
+      tags:
+        - Forms
+      summary: Update a form
+      operationId: updateForm
+      security:
+        - bearerAuth:
+            - write:forms
+            - read:forms
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+            example: 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - title
+                - settings
+                - elements
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: Test
+                logoUrl:
+                  type: string
+                  example: null
+                settings:
+                  type: object
+                  properties:
+                    colors:
+                      type: object
+                      properties:
+                        fontColor:
+                          type: string
+                        formColor:
+                          type: string
+                        pageColor:
+                          type: string
+                        inputBackground:
+                          type: string
+                    styles:
+                      type: object
+                      properties:
+                        font:
+                          type: string
+                        fontSize:
+                          type: string
+                        formWidth:
+                          type: string
+                        questionSpacing:
+                          type: string
+                elements:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Element'
+        required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 200
+                  message:
+                    type: string
+                    example: Success
+                  data:
+                    $ref: '#/components/schemas/Form'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 500
+                  message:
+                    type: string
+                    example: Internal server error
+    delete:
+      tags:
+        - Forms
+      summary: Delete a form
+      operationId: deleteForm
+      security:
+        - bearerAuth:
+            - write:forms
+            - read:forms
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+            example: 1
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 200
+                  message:
+                    type: string
+                    example: Success
+                  data:
+                    $ref: '#/components/schemas/Form'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 500
+                  message:
+                    type: string
+                    example: Internal server error
+  /forms/{id}/favourites:
+    patch:
+      tags:
+        - Forms
+      summary: Add a form to favourites
+      operationId: addToFavourites
+      security:
+        - bearerAuth:
+            - write:forms
+            - read:forms
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+            example: 1
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 200
+                  message:
+                    type: string
+                    example: Success
+                  data:
+                    $ref: '#/components/schemas/Form'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 500
+                  message:
+                    type: string
+                    example: Internal server error
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 1
+        username:
+          type: string
+          example: John
+        email:
+          type: string
+          example: john@email.com
+        password:
+          type: string
+          example: '12345'
+        avatarUrl:
+          type: string
+          example: ''
+        createdAt:
+          type: string
+          example: ''
+        updateddAt:
+          type: string
+          example: ''
+        deletedAt:
+          type: string
+          example: ''
+    Form:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 1
+        title:
+          type: string
+          example: Test
+        logoUrl:
+          type: string
+          example: https://images.unsplash.com/photo-1708769467671-39a739d24f8f
+        settings:
+          type: object
+          properties:
+            colors:
+              type: object
+              properties:
+                fontColor:
+                  type: string
+                formColor:
+                  type: string
+                pageColor:
+                  type: string
+                inputBackground:
+                  type: string
+            styles:
+              type: object
+              properties:
+                font:
+                  type: string
+                fontSize:
+                  type: string
+                formWidth:
+                  type: string
+                questionSpacing:
+                  type: string
+        totalSubmissions:
+          type: number
+        elements:
+          type: array
+          items:
+            $ref: '#/components/schemas/Element'
+        permissions:
+          type: object
+          example: { '1': ['view', 'edit', 'delete'] }
+        createdAt:
+          type: string
+          example: 2024-02-26T03:53:41.438Z
+        updatedAt:
+          type: string
+          example: 2024-02-26T03:53:41.438Z
+        deletedAt:
+          type: string
+          example: 2024-02-26T03:53:41.438Z
+        creatorId:
+          type: number
+          example: 2
+        favouritedByUsers:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10
+              email:
+                type: string
+                example: example@gmail.com
+    Element:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 12
+        type:
+          type: string
+          example: fullname
+        config:
+          type: object
+          example:
+            {
+              fieldLabel: 'Name',
+              required: true,
+              sublabels: ['First name', 'Last name'],
+            }
+        fields:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 50
+              name:
+                type: string
+                example: firstname
+        position:
+          type: object
+          properties:
+            x:
+              type: number
+            y:
+              type: number
+            w:
+              type: number
+              example: 100
+            h:
+              type: number
+              example: 200
+  securitySchemes:
+    bearerAuth:
+      in: header
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      flows:
+        implicit:
+          scopes:
+            write:users: modify users in your account
+            read:users: read your users
+            write:forms: modify forms in your account
+            read:forms: read your forms

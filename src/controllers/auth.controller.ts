@@ -1,7 +1,11 @@
 import { Request, Response } from 'express';
 import status from 'http-status';
 
-import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '../constants';
+import {
+  ERROR_MESSAGES,
+  USER_ERROR_MESSAGES,
+  USER_SUCCESS_MESSAGES,
+} from '../constants';
 import { AuthService, getAuthService } from '../services/auth.service';
 import {
   comparePassword,
@@ -23,7 +27,7 @@ export class AuthController {
       const isExistedUser = await this.authService.checkExist(email);
 
       if (isExistedUser)
-        return errorResponse(res, ERROR_MESSAGES.USER_ALREADY_EXISTS);
+        return errorResponse(res, USER_ERROR_MESSAGES.USER_ALREADY_EXISTS);
 
       const newUser = await this.authService.createUser(
         email,
@@ -49,7 +53,7 @@ export class AuthController {
       return successResponse(
         res,
         { user: returnUser, token },
-        SUCCESS_MESSAGES.USER_CREATED,
+        USER_SUCCESS_MESSAGES.USER_CREATED,
       );
     } catch (error) {
       console.error('Error in signup:', error);
@@ -66,10 +70,10 @@ export class AuthController {
       const { email, password } = req.body;
       const user = await this.authService.getUserByEmail(email);
 
-      if (!user) return errorResponse(res, ERROR_MESSAGES.USER_NOT_FOUND);
+      if (!user) return errorResponse(res, USER_ERROR_MESSAGES.USER_NOT_FOUND);
 
       if (!comparePassword(password, user.password))
-        return errorResponse(res, ERROR_MESSAGES.INCORRECT_INFORMATION);
+        return errorResponse(res, USER_ERROR_MESSAGES.INCORRECT_INFORMATION);
 
       const payload = {
         userId: user.id,
@@ -89,7 +93,7 @@ export class AuthController {
       return successResponse(
         res,
         { user: returnUser, token },
-        SUCCESS_MESSAGES.LOGIN_SUCCESS,
+        USER_SUCCESS_MESSAGES.LOGIN_SUCCESS,
       );
     } catch (error) {
       console.error('Error in login:', error);

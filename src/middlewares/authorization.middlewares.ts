@@ -3,7 +3,8 @@ import status from 'http-status';
 import * as jwt from 'jsonwebtoken';
 
 import { JWT_SECRET } from '../configs/secrets';
-import { ERROR_MESSAGES } from '../constants';
+import { USER_ERROR_MESSAGES } from '../constants';
+import { CustomJwtPayload } from '../types/jwtPayload.types';
 import { errorResponse } from '../utils';
 
 export const verifyToken = (
@@ -16,18 +17,18 @@ export const verifyToken = (
   if (!token) {
     return errorResponse(
       res,
-      ERROR_MESSAGES.NO_TOKEN_PROVIDED,
+      USER_ERROR_MESSAGES.NO_TOKEN_PROVIDED,
       status.UNAUTHORIZED,
     );
   }
   try {
-    const claims = jwt.verify(token, JWT_SECRET);
+    const claims = jwt.verify(token, JWT_SECRET) as CustomJwtPayload;
     req.session = claims;
     next();
   } catch (err) {
     return errorResponse(
       res,
-      ERROR_MESSAGES.INVALID_TOKEN,
+      USER_ERROR_MESSAGES.INVALID_TOKEN,
       status.UNAUTHORIZED,
     );
   }

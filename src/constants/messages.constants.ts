@@ -1,9 +1,38 @@
 export const ERROR_MESSAGES = {
+  INTERNAL_SERVER_ERROR: 'Internal Server Error',
+  ACCESS_DENIED: 'Access denied',
+  NOT_FOUND_ROUTES: 'No routes found',
+  NO_EMPTY_REQUEST_BODY: 'Request body cannot be empty',
+  REQUIRED_FIELD: 'This field is required',
+  NO_EMPTY_FIELD: 'This field cannot be empty',
+  REQUIRED_STRING_TYPE: 'This field must be a string',
+  REQUIRED_NUMBER_TYPE: 'This field must be a number',
+  REQUIRED_BOOLEAN_TYPE: 'This field must be a boolean',
+  REQUIRED_OBJECT_TYPE: 'This field must be an object',
+  REQUIRED_ARRAY_TYPE: 'This field must be an array',
+  INVALID_SORT_FIELD: 'Invalid sort field',
+  INVALID_SORT_DIRECTION: 'Invalid sort direction',
+};
+
+export const SUCCESS_MESSAGES = {
+  DEFAULT: 'Success',
+};
+
+export const USER_SUCCESS_MESSAGES = {
+  USER_CREATED: 'User created successfully',
+  LOGIN_SUCCESS: 'Login successfully',
+  GET_LIST_USER: 'Get list of users successfully',
+  GET_USER: 'Get information of user successfully',
+  DELETE_USER_SUCCESS: 'Delete user successfully',
+  UPDATE_USER_SUCCESS: 'Update user successfully',
+  CHANGE_PW_SUCCESS: 'Change password successfully',
+};
+
+export const USER_ERROR_MESSAGES = {
   USER_ALREADY_EXISTS:
     'User with this email already exists. Please try another email',
   USER_NOT_FOUND: 'User does not exist',
   INCORRECT_INFORMATION: 'Incorrect email or password',
-  INTERNAL_SERVER_ERROR: 'Internal Server Error',
   NO_TOKEN_PROVIDED: 'No token provided',
   INVALID_TOKEN: 'Invalid token',
   REQUIRED_ID: 'Provide Id is required',
@@ -17,19 +46,67 @@ export const ERROR_MESSAGES = {
   REQUIRED_SPECIAL_CHARS: 'Must contain at least one special character',
   REQUIRED_USERNAME: 'Username is required',
   NO_EMPTY_USERNAME: 'Username cannot be empty',
-  NOT_FOUND_ROUTES: 'No routes found',
   INCORRECT_PASSWORD: 'Password do not match',
   DIFFERENT_PASSWORD: 'New password must be different',
 };
 
-export const SUCCESS_MESSAGES = {
-  USER_CREATED: 'User created successfully!',
-  LOGIN_SUCCESS: 'Login successfully!',
-  GET_LIST_USER: 'Get list of users successfully',
-  GET_USER: 'Get information of user successfully',
-  DELETE_USER_SUCCESS: 'Delete user successfully',
-  UPDATE_USER_SUCCESS: 'Update user successfully',
-  CHANGE_PW_SUCCESS: 'Change password successfully',
+export const FORM_SUCCESS_MESSAGES = {
+  CREATE_FORM_SUCCESS: 'Form created successfully',
+  UPDATE_FORM_SUCCESS: 'Form updated successfully',
+  SOFT_DELETE_SUCCESS: 'Form has been moved to trash successfully',
+  HARD_DELETE_SUCCESS: 'Form has been permanently deleted',
+  ADD_TO_FAVOURITES_SUCCESS: 'This form has been added to your favourite forms',
+  REMOVE_FROM_FAVOURITES_SUCCESS:
+    'This form has been removed from your favourite forms',
+};
+
+export const FORM_ERROR_MESSAGES = {
+  FORM_NOT_FOUND: 'Form not found',
+  UNDEFINED_TYPE_OF_ELEMENT: 'Undefined type of element',
+  REQUIRED_FIELD_IN_HEADING_CONFIG:
+    "This field is required in property 'config' of the heading element",
+  REQUIRED_FIELD_IN_FULLNAME_CONFIG:
+    "This field is required in property 'config' of the fullname element",
+  REQUIRED_FIELD_IN_EMAIL_CONFIG:
+    "This field is required in property 'config' of the email element",
+  REQUIRED_FIELD_IN_ADDRESS_CONFIG:
+    "This field is required in property 'config' of the address element",
+  REQUIRED_FIELD_IN_PHONE_CONFIG:
+    "This field is required in property 'config' of the phone element",
+  REQUIRED_FIELD_IN_DATEPICKER_CONFIG:
+    "This field is required in property 'config' of the datepicker element",
+  REQUIRED_FIELD_IN_APPOINTMENT_CONFIG:
+    "This field is required in property 'config' of the appointment element",
+  REQUIRED_FIELD_IN_SHORT_TEXT_CONFIG:
+    "This field is required in property 'config' of the short text element",
+  REQUIRED_FIELD_IN_LONG_TEXT_CONFIG:
+    "This field is required in property 'config' of the long text element",
+  REQUIRED_FIELD_IN_DROPDOWN_CONFIG:
+    "This field is required in property 'config' of the dropdown element",
+  REQUIRED_FIELD_IN_SINGLE_CHOICE_CONFIG:
+    "This field is required in property 'config' of the single choice element",
+  REQUIRED_FIELD_IN_MULTIPLE_CHOICE_CONFIG:
+    "This field is required in property 'config' of the multiple choice element",
+  REQUIRED_FIELD_IN_NUMBER_CONFIG:
+    "This field is required in property 'config' of the number element",
+  REQUIRED_FIELD_IN_IMAGE_CONFIG:
+    "This field is required in property 'config' of the image element",
+  REQUIRED_FIELD_IN_FILE_UPLOAD_CONFIG:
+    "This field is required in property 'config' of the file upload element",
+  REQUIRED_FIELD_IN_TIME_CONFIG:
+    "This field is required in property 'config' of the time element",
+  REQUIRED_FIELD_IN_SUBMIT_CONFIG:
+    "This field is required in property 'config' of the submit element",
+  REQUIRED_FIELD_IN_INPUT_TABLE_CONFIG:
+    "This field is required in property 'config' of the input table element",
+  REQUIRED_FIELD_IN_STAR_RATING_CONFIG:
+    "This field is required in property 'config' of the star rating element",
+  REQUIRED_FIELD_IN_SCALE_RATING_CONFIG:
+    "This field is required in property 'config' of the scale rating element",
+  REQUIRED_FIELD_IN_DIVIDER_CONFIG:
+    "This field is required in property 'config' of the divider element",
+  REQUIRED_FIELD_IN_PAGE_BREAK_CONFIG:
+    "This field is required in property 'config' of the page break element",
 };
 
 export const IMAGE_ERROR_MESSAGES = {

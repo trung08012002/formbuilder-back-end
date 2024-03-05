@@ -1,9 +1,9 @@
-import { JwtPayload } from 'jsonwebtoken';
+import { CustomJwtPayload } from './types/jwtPayload.types';
 
 declare global {
   namespace Express {
     interface Request {
-      session?: string | JwtPayload;
+      session: CustomJwtPayload;
     }
   }
 }

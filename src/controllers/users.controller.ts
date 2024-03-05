@@ -1,7 +1,11 @@
 import { Request, Response } from 'express';
 import status from 'http-status';
 
-import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '../constants';
+import {
+  ERROR_MESSAGES,
+  USER_ERROR_MESSAGES,
+  USER_SUCCESS_MESSAGES,
+} from '../constants';
 import { getUsersService, UsersService } from '../services/users.service';
 import { comparePassword, errorResponse, successResponse } from '../utils';
 
@@ -27,7 +31,7 @@ export class UsersController {
       return successResponse(
         res,
         returnUsers,
-        SUCCESS_MESSAGES.GET_LIST_USER,
+        USER_SUCCESS_MESSAGES.GET_LIST_USER,
         status.OK,
       );
     } catch (error) {
@@ -44,11 +48,11 @@ export class UsersController {
     try {
       const { id } = req.params;
 
-      if (!id) return errorResponse(res, ERROR_MESSAGES.REQUIRED_ID);
+      if (!id) return errorResponse(res, USER_ERROR_MESSAGES.REQUIRED_ID);
 
       const user = await this.usersService.getUserByID(Number(id));
 
-      if (!user) return errorResponse(res, ERROR_MESSAGES.USER_NOT_FOUND);
+      if (!user) return errorResponse(res, USER_ERROR_MESSAGES.USER_NOT_FOUND);
 
       const returnUser = {
         username: user.username,
@@ -61,7 +65,7 @@ export class UsersController {
       return successResponse(
         res,
         returnUser,
-        SUCCESS_MESSAGES.GET_USER,
+        USER_SUCCESS_MESSAGES.GET_USER,
         status.OK,
       );
     } catch (error) {
@@ -78,14 +82,14 @@ export class UsersController {
     try {
       const { id } = req.params;
 
-      if (!id) return errorResponse(res, ERROR_MESSAGES.REQUIRED_ID);
+      if (!id) return errorResponse(res, USER_ERROR_MESSAGES.REQUIRED_ID);
 
       await this.usersService.delUserByID(Number(id));
 
       return successResponse(
         res,
         {},
-        SUCCESS_MESSAGES.DELETE_USER_SUCCESS,
+        USER_SUCCESS_MESSAGES.DELETE_USER_SUCCESS,
         status.OK,
       );
     } catch (error) {
@@ -103,21 +107,21 @@ export class UsersController {
       const { id } = req.params;
       const { currentPassword, newPassword } = req.body;
 
-      if (!id) return errorResponse(res, ERROR_MESSAGES.REQUIRED_ID);
+      if (!id) return errorResponse(res, USER_ERROR_MESSAGES.REQUIRED_ID);
 
       const user = await this.usersService.getUserByID(Number(id));
 
-      if (!user) return errorResponse(res, ERROR_MESSAGES.USER_NOT_FOUND);
+      if (!user) return errorResponse(res, USER_ERROR_MESSAGES.USER_NOT_FOUND);
 
       if (!comparePassword(currentPassword, user.password))
-        return errorResponse(res, ERROR_MESSAGES.INCORRECT_PASSWORD);
+        return errorResponse(res, USER_ERROR_MESSAGES.INCORRECT_PASSWORD);
 
       if (currentPassword === newPassword)
-        return errorResponse(res, ERROR_MESSAGES.DIFFERENT_PASSWORD);
+        return errorResponse(res, USER_ERROR_MESSAGES.DIFFERENT_PASSWORD);
 
       await this.usersService.changePassword(Number(id), newPassword);
 
-      return successResponse(res, SUCCESS_MESSAGES.CHANGE_PW_SUCCESS);
+      return successResponse(res, USER_SUCCESS_MESSAGES.CHANGE_PW_SUCCESS);
     } catch (error) {
       console.error('Error in change password of user:', error);
       return errorResponse(
@@ -134,7 +138,7 @@ export class UsersController {
       const { username, email, avatarUrl, organizationName, organizationLogo } =
         req.body;
 
-      if (!id) return errorResponse(res, ERROR_MESSAGES.REQUIRED_ID);
+      if (!id) return errorResponse(res, USER_ERROR_MESSAGES.REQUIRED_ID);
 
       await this.usersService.updateUserByID(Number(id), {
         username,
@@ -145,7 +149,7 @@ export class UsersController {
       });
 
       return successResponse(res, {
-        message: SUCCESS_MESSAGES.UPDATE_USER_SUCCESS,
+        message: USER_SUCCESS_MESSAGES.UPDATE_USER_SUCCESS,
       });
     } catch (error) {
       console.error('Error in update user:', error);

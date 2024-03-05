@@ -18,10 +18,30 @@ model User {
   avatarUrl         String?   @map("avatar_url")
   organizationName  String?   @map("organization_name")
   organizationLogo  String?   @map("organization_logo")
-  createdAt         DateTime  @default(now()) @map("created_at")
-  updatedAt         DateTime? @updatedAt @map("updated_at")
-  deletedAt         DateTime? @map("deleted_at")
-  passwordChangedAt DateTime? @map("password_changed_at")
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt         DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
+  deletedAt         DateTime? @map("deleted_at") @db.Timestamptz(3)
+  passwordChangedAt DateTime? @map("password_changed_at") @db.Timestamptz(3)
+  createdForms      Form[]    @relation("CreatedForms")
+  favouriteForms    Form[]    @relation("FavouriteForms")
 
   @@map("Users")
+}
+
+model Form {
+  id                Int       @id @default(autoincrement())
+  title             String
+  logoUrl           String?   @map("logo_url")
+  settings          Json
+  totalSubmissions  Int?      @default(0) @map("total_submissions")
+  elements          Json[]
+  permissions       Json?
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt         DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
+  deletedAt         DateTime? @map("deleted_at") @db.Timestamptz(3)
+  creator           User      @relation("CreatedForms", fields: [creatorId], references: [id])
+  creatorId         Int       @map("creator_id")
+  favouritedByUsers User[]    @relation("FavouriteForms")
+
+  @@map("forms")
 }

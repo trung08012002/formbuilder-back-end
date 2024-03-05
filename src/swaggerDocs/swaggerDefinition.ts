@@ -23,5 +23,9 @@ export const swaggerDefinition = {
     {
       name: 'Images',
     },
+    {
+      name: 'Forms',
+      description: 'APIs about Forms',
+    },
   ],
 };

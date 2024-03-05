@@ -21,4 +21,11 @@ export const ROUTES = {
     PATH: '/images',
     UPLOAD: '/upload',
   },
+  FORM: {
+    PATH: '/forms',
+    GET_FORM_DETAILS: '/:id',
+    UPDATE_FORM: '/:id',
+    DELETE_FORM: '/:id',
+    FAVOURITES: '/:id/favourites',
+  },
 };

@@ -1,15 +1,15 @@
 import { Response } from 'express';
-import { BAD_REQUEST, CREATED } from 'http-status';
+import { BAD_REQUEST, OK } from 'http-status';
 
-export const successResponse = (
+export const successResponse = <T>(
   res: Response,
-  data?: unknown,
+  data?: T,
   message?: string,
-  status: number = CREATED,
-) => res.status(status).json({ data, message });
+  status: number = OK,
+) => res.status(status).json({ statusCode: status, message, data });
 
 export const errorResponse = (
   res: Response,
   message: string,
   status: number = BAD_REQUEST,
-) => res.status(status).json({ message });
+) => res.status(status).json({ statusCode: status, message });
