@@ -6,6 +6,7 @@ import swaggerUi from 'swagger-ui-express';
 
 import { PORT } from './configs/secrets';
 import authRoute from './routes/auth.routes';
+import foldersRoute from './routes/folders.routes';
 import formsRoute from './routes/forms.routes';
 import imagesRoute from './routes/images.routes';
 import usersRoute from './routes/users.routes';
@@ -36,11 +37,10 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 app.use(ROUTES.AUTH.PATH, authRoute);
-
 app.use(ROUTES.USER.PATH, usersRoute);
-
 app.use(ROUTES.IMAGE.PATH, imagesRoute);
 app.use(ROUTES.FORM.PATH, formsRoute);
+app.use(ROUTES.FOLDER.PATH, foldersRoute);
 
 app.use((req: Request, res: Response) =>
   errorResponse(res, ERROR_MESSAGES.NOT_FOUND_ROUTES, NOT_FOUND),

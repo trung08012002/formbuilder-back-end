@@ -28,4 +28,10 @@ export const ROUTES = {
     DELETE_FORM: '/:id',
     FAVOURITES: '/:id/favourites',
   },
+  FOLDER: {
+    PATH: '/folders',
+    GET_FOLDER_DETAILS: '/:id',
+    UPDATE_FOLDER: '/:id',
+    DELETE_FOLDER: '/:id',
+  },
 };

@@ -117,3 +117,13 @@ export const IMAGE_ERROR_MESSAGES = {
 export const IMAGE_SUCCESS_MESSAGES = {
   UPLOAD_FILE_SUCCESS: 'Upload file successfully',
 };
+
+export const FOLDER_SUCCESS_MESSAGES = {
+  CREATE_FOLDER_SUCCESS: 'Folder created successfully',
+  UPDATE_FOLDER_SUCCESS: 'Folder updated successfully',
+  DELETE_FOLDER_SUCCESS: 'Folder has been deleted',
+};
+
+export const FOLDER_ERROR_MESSAGES = {
+  FOLDER_NOT_FOUND: 'Folder not found',
+};
