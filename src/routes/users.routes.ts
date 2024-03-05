@@ -17,9 +17,9 @@ const usersController: UsersController = getUsersController();
 
 usersRoute.get(ROUTES.ROOT.PATH, verifyToken, usersController.getAllUsers);
 usersRoute.get(
-  ROUTES.USER.GET_USER_DETAILS,
+  ROUTES.USER.GET_MY_PROFILE,
   verifyToken,
-  usersController.getUserByID,
+  usersController.getUserProfile,
 );
 usersRoute.delete(
   ROUTES.USER.DELETE_USER,

@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import status from 'http-status';
 
+import { CustomJwtPayload } from '@/types/jwtPayload.types';
+
 import {
   ERROR_MESSAGES,
   USER_ERROR_MESSAGES,
@@ -24,6 +26,8 @@ export class UsersController {
         username: user.username,
         email: user.email,
         avatarUrl: user.avatarUrl,
+        organizationLogo: user.organizationLogo,
+        organizationName: user.organizationName,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
       }));
@@ -44,9 +48,9 @@ export class UsersController {
     }
   };
 
-  public getUserByID = async (req: Request, res: Response) => {
+  public getUserProfile = async (req: Request, res: Response) => {
     try {
-      const { id } = req.params;
+      const id = (req.session as CustomJwtPayload).userId;
 
       if (!id) return errorResponse(res, USER_ERROR_MESSAGES.REQUIRED_ID);
 
@@ -58,6 +62,8 @@ export class UsersController {
         username: user.username,
         email: user.email,
         avatarUrl: user.avatarUrl,
+        organizationLogo: user.organizationLogo,
+        organizationName: user.organizationName,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
       };

@@ -38,21 +38,12 @@ export class AuthController {
       const payload = {
         userId: newUser.id,
         email: newUser.email,
-        username: newUser.username,
       };
       const token = createJWT(payload);
 
-      const returnUser = {
-        username: newUser.username,
-        email: newUser.email,
-        avatarUrl: newUser.avatarUrl,
-        createdAt: newUser.createdAt,
-        updatedAt: newUser.updatedAt,
-      };
-
       return successResponse(
         res,
-        { user: returnUser, token },
+        { token },
         USER_SUCCESS_MESSAGES.USER_CREATED,
       );
     } catch (error) {
@@ -78,21 +69,12 @@ export class AuthController {
       const payload = {
         userId: user.id,
         email: user.email,
-        username: user.username,
       };
       const token = createJWT(payload);
 
-      const returnUser = {
-        username: user.username,
-        email: user.email,
-        avatarUrl: user.avatarUrl,
-        createdAt: user.createdAt,
-        updatedAt: user.updatedAt,
-      };
-
       return successResponse(
         res,
-        { user: returnUser, token },
+        { token },
         USER_SUCCESS_MESSAGES.LOGIN_SUCCESS,
       );
     } catch (error) {
