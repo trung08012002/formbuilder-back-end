@@ -12,10 +12,9 @@ export const ROUTES = {
   },
   USER: {
     PATH: '/users',
-    GET_MY_PROFILE: '/my-profile',
-    UPDATE_USER: '/:id',
+    MY_PROFILE: '/my-profile',
     DELETE_USER: '/:id',
-    CHANGE_PASSWORD: '/:id/change-password',
+    CHANGE_PASSWORD: '/change-password',
   },
   IMAGE: {
     PATH: '/images',

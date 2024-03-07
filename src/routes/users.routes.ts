@@ -17,7 +17,7 @@ const usersController: UsersController = getUsersController();
 
 usersRoute.get(ROUTES.ROOT.PATH, verifyToken, usersController.getAllUsers);
 usersRoute.get(
-  ROUTES.USER.GET_MY_PROFILE,
+  ROUTES.USER.MY_PROFILE,
   verifyToken,
   usersController.getUserProfile,
 );
@@ -33,10 +33,10 @@ usersRoute.patch(
   usersController.changePassword,
 );
 usersRoute.patch(
-  ROUTES.USER.UPDATE_USER,
+  ROUTES.USER.MY_PROFILE,
   verifyToken,
   validateUpdateUserInput,
-  usersController.updateUserByID,
+  usersController.updateUserProfile,
 );
 
 export default usersRoute;

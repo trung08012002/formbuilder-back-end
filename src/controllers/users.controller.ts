@@ -1,21 +1,22 @@
 import { Request, Response } from 'express';
 import status from 'http-status';
 
-import { CustomJwtPayload } from '@/types/jwtPayload.types';
-
 import {
   ERROR_MESSAGES,
   USER_ERROR_MESSAGES,
   USER_SUCCESS_MESSAGES,
 } from '../constants';
+import { AuthService, getAuthService } from '../services/auth.service';
 import { getUsersService, UsersService } from '../services/users.service';
 import { comparePassword, errorResponse, successResponse } from '../utils';
 
 export class UsersController {
   private usersService: UsersService;
+  private authService: AuthService;
 
   public constructor() {
     this.usersService = getUsersService();
+    this.authService = getAuthService();
   }
 
   public getAllUsers = async (req: Request, res: Response) => {
@@ -50,7 +51,7 @@ export class UsersController {
 
   public getUserProfile = async (req: Request, res: Response) => {
     try {
-      const id = (req.session as CustomJwtPayload).userId;
+      const id = req.session.userId;
 
       if (!id) return errorResponse(res, USER_ERROR_MESSAGES.REQUIRED_ID);
 
@@ -110,7 +111,7 @@ export class UsersController {
 
   public changePassword = async (req: Request, res: Response) => {
     try {
-      const { id } = req.params;
+      const id = req.session.userId;
       const { currentPassword, newPassword } = req.body;
 
       if (!id) return errorResponse(res, USER_ERROR_MESSAGES.REQUIRED_ID);
@@ -138,11 +139,16 @@ export class UsersController {
     }
   };
 
-  public updateUserByID = async (req: Request, res: Response) => {
+  public updateUserProfile = async (req: Request, res: Response) => {
     try {
-      const { id } = req.params;
+      const id = req.session.userId;
       const { username, email, avatarUrl, organizationName, organizationLogo } =
         req.body;
+
+      const isExistedUser = await this.authService.checkExist(email);
+
+      if (isExistedUser)
+        return errorResponse(res, USER_ERROR_MESSAGES.USER_ALREADY_EXISTS);
 
       if (!id) return errorResponse(res, USER_ERROR_MESSAGES.REQUIRED_ID);
 
