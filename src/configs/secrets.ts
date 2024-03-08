@@ -10,3 +10,5 @@ export const SALT_ROUNDS = Number(process.env.SALT_ROUNDS!);
 export const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME!;
 export const CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY!;
 export const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET!;
+export const FRONT_END_URL =
+  process.env.FRONT_END_URL || 'http://localhost:5000';

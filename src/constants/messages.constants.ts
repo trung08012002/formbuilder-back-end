@@ -127,3 +127,19 @@ export const FOLDER_SUCCESS_MESSAGES = {
 export const FOLDER_ERROR_MESSAGES = {
   FOLDER_NOT_FOUND: 'Folder not found',
 };
+
+export const TEAM_SUCCESS_MESSAGES = {
+  CREATE_TEAM_SUCCESS: 'Team created successfully',
+  UPDATE_TEAM_SUCCESS: 'Team updated successfully',
+  DELETE_TEAM_SUCCESS: 'Team deleted successfully',
+  ADD_TEAM_MEMBER_SUCCESS: 'Add new team member successfully',
+  REMOVE_TEAM_MEMBER_SUCCESS: 'Remove team member successfully',
+};
+
+export const TEAM_ERROR_MESSAGES = {
+  TEAM_NOT_FOUND: 'Team not found',
+  USER_EXISTS_IN_TEAM: 'This user already exists in the team',
+  USER_NOT_IN_TEAM: 'This user does not exist in the team',
+  NO_MEMBERS_IN_TEAM: 'There are no members in the team',
+  CAN_NOT_REMOVE_TEAM_OWNER: 'Team owner can not be removed from the team',
+};

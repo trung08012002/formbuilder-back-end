@@ -33,4 +33,12 @@ export const ROUTES = {
     UPDATE_FOLDER: '/:id',
     DELETE_FOLDER: '/:id',
   },
+  TEAM: {
+    PATH: '/teams',
+    GET_TEAM_DETAILS: '/:id',
+    UPDATE_TEAM: '/:id',
+    DELETE_TEAM: '/:id',
+    ADD_MEMBER: '/:id/add-member',
+    REMOVE_MEMBER: '/:id/remove-member',
+  },
 };

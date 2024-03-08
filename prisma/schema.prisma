@@ -25,6 +25,8 @@ model User {
   createdForms      Form[]    @relation("CreatedForms")
   favouriteForms    Form[]    @relation("FavouriteForms")
   createdFolders    Folder[]  @relation("CreatedFolders")
+  createdTeams      Team[]    @relation("CreatedTeams")
+  teams             Team[]    @relation("TeamMembers")
 
   @@map("users")
 }
@@ -45,6 +47,8 @@ model Form {
   favouritedByUsers User[]    @relation("FavouriteForms")
   folderId          Int?      @map("folder_id")
   folder            Folder?   @relation(fields: [folderId], references: [id])
+  team              Team?     @relation(fields: [teamId], references: [id])
+  teamId            Int?      @map("team_id")
 
   @@map("forms")
 }
@@ -62,4 +66,20 @@ model Folder {
   forms       Form[]
 
   @@map("folders")
+}
+
+model Team {
+  id          Int       @id @default(autoincrement())
+  name        String
+  logoUrl     String?   @map("logo_url")
+  permissions Json?
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
+  deletedAt   DateTime? @map("deleted_at") @db.Timestamptz(3)
+  creator     User      @relation("CreatedTeams", fields: [creatorId], references: [id])
+  creatorId   Int       @map("creator_id")
+  forms       Form[]
+  members     User[]    @relation("TeamMembers")
+
+  @@map("teams")
 }

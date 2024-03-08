@@ -1,4 +1,5 @@
 import prisma from '../configs/db.config';
+import { TEAM_ERROR_MESSAGES } from '../constants';
 import { FormPayload, GetFormsParams } from '../types/forms.types';
 import { PERMISSIONS } from '../types/permissions.types';
 
@@ -29,6 +30,62 @@ export class FormsService {
           },
         },
       },
+    });
+
+  public createFormInTeam = (
+    userId: number,
+    teamId: number,
+    payload: FormPayload,
+  ) =>
+    prisma.$transaction(async (tx) => {
+      // get members' ids in team
+      const membersInTeam = await tx.team
+        .findUnique({
+          where: {
+            id: teamId,
+          },
+        })
+        .members();
+      const memberIds = membersInTeam?.map((member) => member.id);
+
+      // update form permissions for all members in team
+      let formPermissions = {};
+      if (!memberIds) {
+        throw Error(TEAM_ERROR_MESSAGES.NO_MEMBERS_IN_TEAM);
+      }
+      memberIds.map(
+        (memberId) =>
+          (formPermissions = {
+            ...formPermissions,
+            [memberId]: [
+              PERMISSIONS.VIEW,
+              PERMISSIONS.EDIT,
+              PERMISSIONS.DELETE,
+            ],
+          }),
+      );
+
+      const createdForm = await tx.form.create({
+        data: {
+          title: payload.title,
+          logoUrl: payload.logoUrl,
+          settings: payload.settings,
+          elements: payload.elements,
+          permissions: formPermissions,
+          creator: {
+            connect: {
+              id: userId,
+            },
+          },
+          team: {
+            connect: {
+              id: teamId,
+            },
+          },
+        },
+      });
+
+      return createdForm;
     });
 
   public getFormsByUserId = (userId: number, params: GetFormsParams) =>

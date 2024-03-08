@@ -13,9 +13,11 @@ import {
   SORT_FORM_DIRECTIONS,
   SORT_FORM_FIELDS,
   SUCCESS_MESSAGES,
+  TEAM_ERROR_MESSAGES,
   USER_ERROR_MESSAGES,
 } from '../constants';
 import { FormsService, getFormsService } from '../services/forms.service';
+import { getTeamsService, TeamsService } from '../services/teams.service';
 import { getUsersService, UsersService } from '../services/users.service';
 import {
   canDelete,
@@ -38,10 +40,12 @@ export const getFormsController = () => {
 export class FormsController {
   private formsService: FormsService;
   private usersService: UsersService;
+  private teamsService: TeamsService;
 
   public constructor() {
     this.formsService = getFormsService();
     this.usersService = getUsersService();
+    this.teamsService = getTeamsService();
   }
 
   public getAllMyForms = async (req: Request, res: Response) => {
@@ -151,7 +155,7 @@ export class FormsController {
 
   public createForm = async (req: Request, res: Response) => {
     try {
-      const { title, logoUrl, settings, elements } = req.body;
+      const { title, logoUrl, settings, elements, teamId } = req.body;
       const userId = req.session.userId;
 
       const existingUser = await this.usersService.getUserByID(userId);
@@ -160,6 +164,29 @@ export class FormsController {
           res,
           USER_ERROR_MESSAGES.USER_NOT_FOUND,
           status.NOT_FOUND,
+        );
+      }
+
+      if (teamId) {
+        const memberExistsInTeam =
+          await this.teamsService.checkMemberExistsInTeam(
+            teamId,
+            existingUser.id,
+          );
+        if (!memberExistsInTeam) {
+          return errorResponse(res, TEAM_ERROR_MESSAGES.USER_NOT_IN_TEAM);
+        }
+
+        const newForm = await this.formsService.createFormInTeam(
+          userId,
+          teamId,
+          { title, logoUrl, settings, elements },
+        );
+        return successResponse(
+          res,
+          newForm,
+          FORM_SUCCESS_MESSAGES.CREATE_FORM_SUCCESS,
+          status.CREATED,
         );
       }
 

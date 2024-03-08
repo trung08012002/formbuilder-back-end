@@ -144,8 +144,13 @@ export const CreateFormSchema = z.object({
       invalid_type_error: ERROR_MESSAGES.REQUIRED_STRING_TYPE,
     })
     .optional(),
-  settings: settingsSchema.optional(),
+  settings: settingsSchema.partial(),
   elements: elementsSchema,
+  teamId: z
+    .number({
+      invalid_type_error: ERROR_MESSAGES.REQUIRED_NUMBER_TYPE,
+    })
+    .optional(),
 });
 
 export const UpdateFormSchema = z
@@ -158,7 +163,7 @@ export const UpdateFormSchema = z
     logoUrl: z.string({
       invalid_type_error: ERROR_MESSAGES.REQUIRED_STRING_TYPE,
     }),
-    settings: settingsSchema,
+    settings: settingsSchema.partial(),
     elements: elementsSchema,
   })
   .partial()
