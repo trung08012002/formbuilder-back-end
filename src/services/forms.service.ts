@@ -1,6 +1,10 @@
 import prisma from '../configs/db.config';
 import { TEAM_ERROR_MESSAGES } from '../constants';
-import { FormPayload, GetFormsParams } from '../types/forms.types';
+import {
+  CreateFormSchemaType,
+  UpdateFormSchemaType,
+} from '../schemas/forms.schemas';
+import { GetFormsParams } from '../types/forms.types';
 import { PERMISSIONS } from '../types/permissions.types';
 
 let instance: FormsService | null = null;
@@ -14,7 +18,7 @@ export const getFormsService = () => {
 };
 
 export class FormsService {
-  public createForm = (userId: number, payload: FormPayload) =>
+  public createForm = (userId: number, payload: CreateFormSchemaType) =>
     prisma.form.create({
       data: {
         title: payload.title,
@@ -35,7 +39,7 @@ export class FormsService {
   public createFormInTeam = (
     userId: number,
     teamId: number,
-    payload: FormPayload,
+    payload: CreateFormSchemaType,
   ) =>
     prisma.$transaction(async (tx) => {
       // get members' ids in team
@@ -128,7 +132,7 @@ export class FormsService {
       },
     });
 
-  public updateForm = (formId: number, payload: FormPayload) =>
+  public updateForm = (formId: number, payload: UpdateFormSchemaType) =>
     prisma.form.update({
       where: {
         id: formId,

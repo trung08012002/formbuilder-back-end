@@ -1,16 +1,18 @@
-import { Prisma } from '@prisma/client';
+import { Folder, Prisma } from '@prisma/client';
 import { Request, Response } from 'express';
 import status from 'http-status';
 
 import {
   ERROR_MESSAGES,
-  FOLDER_ERROR_MESSAGES,
   FOLDER_SUCCESS_MESSAGES,
   SUCCESS_MESSAGES,
-  USER_ERROR_MESSAGES,
 } from '../constants';
+import {
+  CreateFolderSchemaType,
+  UpdateFolderSchemaType,
+} from '../schemas/folders.schemas';
 import { FoldersService, getFoldersService } from '../services/folders.service';
-import { getUsersService, UsersService } from '../services/users.service';
+import { CustomRequest } from '../types/customRequest.types';
 import {
   canDelete,
   canEdit,
@@ -30,26 +32,18 @@ export const getFoldersController = () => {
 
 export class FoldersController {
   private foldersService: FoldersService;
-  private usersService: UsersService;
 
   public constructor() {
     this.foldersService = getFoldersService();
-    this.usersService = getUsersService();
   }
 
-  public createFolder = async (req: Request, res: Response) => {
+  public createFolder = async (
+    req: CustomRequest<CreateFolderSchemaType>,
+    res: Response,
+  ) => {
     try {
       const { name } = req.body;
       const userId = req.session.userId;
-
-      const existingUser = await this.usersService.getUserByID(userId);
-      if (!existingUser) {
-        return errorResponse(
-          res,
-          USER_ERROR_MESSAGES.USER_NOT_FOUND,
-          status.NOT_FOUND,
-        );
-      }
 
       const newFolder = await this.foldersService.createFolder(userId, name);
       return successResponse(
@@ -83,20 +77,14 @@ export class FoldersController {
     }
   };
 
-  public getFolderDetails = async (req: Request, res: Response) => {
+  public getFolderDetails = async (
+    req: CustomRequest<{ folder: Folder }>,
+    res: Response,
+  ) => {
     try {
-      const { id } = req.params;
-      const folderId = Number(id);
       const userId = req.session.userId;
 
-      const folder = await this.foldersService.getFolderById(folderId);
-      if (!folder) {
-        return errorResponse(
-          res,
-          FOLDER_ERROR_MESSAGES.FOLDER_NOT_FOUND,
-          status.NOT_FOUND,
-        );
-      }
+      const folder = req.body.folder;
 
       if (!canView(userId, folder.permissions as Prisma.JsonObject)) {
         return errorResponse(
@@ -116,22 +104,18 @@ export class FoldersController {
     }
   };
 
-  public updateFolder = async (req: Request, res: Response) => {
+  public updateFolder = async (
+    req: CustomRequest<UpdateFolderSchemaType & { folder: Folder }>,
+    res: Response,
+  ) => {
     try {
       const { id } = req.params;
       const folderId = Number(id);
       const userId = req.session.userId;
 
-      const existingFolder = await this.foldersService.getFolderById(folderId);
-      if (!existingFolder) {
-        return errorResponse(
-          res,
-          FOLDER_ERROR_MESSAGES.FOLDER_NOT_FOUND,
-          status.NOT_FOUND,
-        );
-      }
+      const folder = req.body.folder;
 
-      if (!canEdit(userId, existingFolder.permissions as Prisma.JsonObject)) {
+      if (!canEdit(userId, folder.permissions as Prisma.JsonObject)) {
         return errorResponse(
           res,
           ERROR_MESSAGES.ACCESS_DENIED,
@@ -159,22 +143,18 @@ export class FoldersController {
     }
   };
 
-  public deleteFolder = async (req: Request, res: Response) => {
+  public deleteFolder = async (
+    req: CustomRequest<{ folder: Folder }>,
+    res: Response,
+  ) => {
     try {
       const { id } = req.params;
       const folderId = Number(id);
       const userId = req.session.userId;
 
-      const existingFolder = await this.foldersService.getFolderById(folderId);
-      if (!existingFolder) {
-        return errorResponse(
-          res,
-          FOLDER_ERROR_MESSAGES.FOLDER_NOT_FOUND,
-          status.NOT_FOUND,
-        );
-      }
+      const folder = req.body.folder;
 
-      if (!canDelete(userId, existingFolder.permissions as Prisma.JsonObject)) {
+      if (!canDelete(userId, folder.permissions as Prisma.JsonObject)) {
         return errorResponse(
           res,
           ERROR_MESSAGES.ACCESS_DENIED,

@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
+import status from 'http-status';
 
 import { ERROR_MESSAGES, FORM_ERROR_MESSAGES } from '../constants';
 import {
@@ -25,8 +26,11 @@ import {
   submitConfigSchema,
   timeConfigSchema,
 } from '../schemas/forms.schemas';
+import { FormsService, getFormsService } from '../services/forms.service';
 import { ELEMENT_TYPE } from '../types/forms.types';
 import { errorResponse, validateData } from '../utils';
+
+const formsService: FormsService = getFormsService();
 
 export const validateConfigSchema = async (
   req: Request,
@@ -270,6 +274,30 @@ export const validateConfigSchema = async (
         );
       }
     }
+    next();
+  } catch (error) {
+    return errorResponse(res, ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
+  }
+};
+
+export const checkFormExistence = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { id } = req.params;
+    const formId = Number(id);
+
+    const existingForm = await formsService.getFormById(formId);
+    if (!existingForm) {
+      return errorResponse(
+        res,
+        FORM_ERROR_MESSAGES.FORM_NOT_FOUND,
+        status.NOT_FOUND,
+      );
+    }
+    req.body.form = existingForm;
     next();
   } catch (error) {
     return errorResponse(res, ERROR_MESSAGES.INTERNAL_SERVER_ERROR);

@@ -1,12 +1,3 @@
-import { Prisma } from '@prisma/client';
-
-export interface FormPayload {
-  title: string;
-  logoUrl: string;
-  settings: Prisma.JsonObject;
-  elements: Prisma.JsonObject[];
-}
-
 export interface GetFormsParams {
   offset: number;
   limit: number;

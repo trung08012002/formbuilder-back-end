@@ -23,3 +23,7 @@ export const UpdateFolderSchema = z
   .refine((data) => Object.keys(data).length > 0, {
     message: ERROR_MESSAGES.NO_EMPTY_REQUEST_BODY,
   });
+
+export type CreateFolderSchemaType = z.infer<typeof CreateFolderSchema>;
+
+export type UpdateFolderSchemaType = z.infer<typeof UpdateFolderSchema>;

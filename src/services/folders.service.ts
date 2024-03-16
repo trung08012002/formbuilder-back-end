@@ -53,7 +53,7 @@ export class FoldersService {
       },
     });
 
-  public updateFolder = async (folderId: number, name: string) =>
+  public updateFolder = async (folderId: number, name?: string) =>
     prisma.folder.update({
       where: { id: folderId },
       data: {

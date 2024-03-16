@@ -701,3 +701,7 @@ export const pageBreakConfigSchema = z
       .min(1, ERROR_MESSAGES.NO_EMPTY_FIELD),
   })
   .strict();
+
+export type CreateFormSchemaType = z.infer<typeof CreateFormSchema>;
+
+export type UpdateFormSchemaType = z.infer<typeof UpdateFormSchema>;

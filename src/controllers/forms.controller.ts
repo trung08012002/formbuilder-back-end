@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import { Form, Prisma } from '@prisma/client';
 import { Request, Response } from 'express';
 import status from 'http-status';
 
@@ -8,17 +8,20 @@ import {
   DEFAULT_PAGE,
   DEFAULT_PAGE_SIZE,
   ERROR_MESSAGES,
-  FORM_ERROR_MESSAGES,
   FORM_SUCCESS_MESSAGES,
   SORT_FORM_DIRECTIONS,
   SORT_FORM_FIELDS,
   SUCCESS_MESSAGES,
   TEAM_ERROR_MESSAGES,
-  USER_ERROR_MESSAGES,
 } from '../constants';
+import {
+  CreateFormSchemaType,
+  UpdateFormSchemaType,
+} from '../schemas/forms.schemas';
 import { FormsService, getFormsService } from '../services/forms.service';
 import { getTeamsService, TeamsService } from '../services/teams.service';
 import { getUsersService, UsersService } from '../services/users.service';
+import { CustomRequest } from '../types/customRequest.types';
 import {
   canDelete,
   canEdit,
@@ -120,20 +123,14 @@ export class FormsController {
     }
   };
 
-  public getFormDetails = async (req: Request, res: Response) => {
+  public getFormDetails = async (
+    req: CustomRequest<{ form: Form }>,
+    res: Response,
+  ) => {
     try {
-      const { id } = req.params;
-      const formId = Number(id);
       const userId = req.session.userId;
 
-      const form = await this.formsService.getFormById(formId);
-      if (!form) {
-        return errorResponse(
-          res,
-          FORM_ERROR_MESSAGES.FORM_NOT_FOUND,
-          status.NOT_FOUND,
-        );
-      }
+      const form = req.body.form;
 
       if (!canView(userId, form.permissions as Prisma.JsonObject)) {
         return errorResponse(
@@ -153,26 +150,17 @@ export class FormsController {
     }
   };
 
-  public createForm = async (req: Request, res: Response) => {
+  public createForm = async (
+    req: CustomRequest<CreateFormSchemaType>,
+    res: Response,
+  ) => {
     try {
       const { title, logoUrl, settings, elements, teamId } = req.body;
       const userId = req.session.userId;
 
-      const existingUser = await this.usersService.getUserByID(userId);
-      if (!existingUser) {
-        return errorResponse(
-          res,
-          USER_ERROR_MESSAGES.USER_NOT_FOUND,
-          status.NOT_FOUND,
-        );
-      }
-
       if (teamId) {
         const memberExistsInTeam =
-          await this.teamsService.checkMemberExistsInTeam(
-            teamId,
-            existingUser.id,
-          );
+          await this.teamsService.checkMemberExistsInTeam(teamId, userId);
         if (!memberExistsInTeam) {
           return errorResponse(res, TEAM_ERROR_MESSAGES.USER_NOT_IN_TEAM);
         }
@@ -211,22 +199,16 @@ export class FormsController {
     }
   };
 
-  public updateForm = async (req: Request, res: Response) => {
+  public updateForm = async (
+    req: CustomRequest<UpdateFormSchemaType & { form: Form }>,
+    res: Response,
+  ) => {
     try {
       const { id } = req.params;
       const formId = Number(id);
       const userId = req.session.userId;
 
-      const existingForm = await this.formsService.getFormById(formId);
-      if (!existingForm) {
-        return errorResponse(
-          res,
-          FORM_ERROR_MESSAGES.FORM_NOT_FOUND,
-          status.NOT_FOUND,
-        );
-      }
-
-      if (!canEdit(userId, existingForm.permissions as Prisma.JsonObject)) {
+      if (!canEdit(userId, req.body.form.permissions as Prisma.JsonObject)) {
         return errorResponse(
           res,
           ERROR_MESSAGES.ACCESS_DENIED,
@@ -234,7 +216,8 @@ export class FormsController {
         );
       }
 
-      const { title, logoUrl, settings, elements } = req.body;
+      const { title, logoUrl, settings, elements } =
+        req.body as UpdateFormSchemaType;
 
       const updatedForm = await this.formsService.updateForm(formId, {
         title,
@@ -256,22 +239,18 @@ export class FormsController {
     }
   };
 
-  public deleteForm = async (req: Request, res: Response) => {
+  public deleteForm = async (
+    req: CustomRequest<{ form: Form }>,
+    res: Response,
+  ) => {
     try {
       const { id } = req.params;
       const formId = Number(id);
       const userId = req.session.userId;
 
-      const existingForm = await this.formsService.getFormById(formId);
-      if (!existingForm) {
-        return errorResponse(
-          res,
-          FORM_ERROR_MESSAGES.FORM_NOT_FOUND,
-          status.NOT_FOUND,
-        );
-      }
+      const form = req.body.form;
 
-      if (!canDelete(userId, existingForm.permissions as Prisma.JsonObject)) {
+      if (!canDelete(userId, form.permissions as Prisma.JsonObject)) {
         return errorResponse(
           res,
           ERROR_MESSAGES.ACCESS_DENIED,
@@ -279,7 +258,7 @@ export class FormsController {
         );
       }
 
-      if (existingForm.deletedAt === null) {
+      if (form.deletedAt === null) {
         const deletedForm = await this.formsService.softDeleteForm(formId);
         return successResponse(
           res,
@@ -308,15 +287,6 @@ export class FormsController {
       const { id } = req.params;
       const formId = Number(id);
       const userId = req.session.userId;
-
-      const existingForm = await this.formsService.getFormById(formId);
-      if (!existingForm) {
-        return errorResponse(
-          res,
-          FORM_ERROR_MESSAGES.FORM_NOT_FOUND,
-          status.NOT_FOUND,
-        );
-      }
 
       const favouriteFormsOfUser =
         await this.usersService.getFavouriteFormsOfUser(userId);

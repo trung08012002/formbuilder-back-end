@@ -2,6 +2,8 @@ import { NextFunction, Request, Response } from 'express';
 import status from 'http-status';
 import { z } from 'zod';
 
+import { errorResponse } from '../utils';
+
 export const validate =
   (schema: z.AnyZodObject | z.ZodEffects<z.AnyZodObject>) =>
   async (req: Request, res: Response, next: NextFunction) => {
@@ -9,13 +11,28 @@ export const validate =
       await schema.parseAsync(req.body);
       next();
     } catch (error) {
-      let err = error;
+      const err = error;
+      const errorMessages: Record<string, string[]> = {};
+      let returnMessage: string = '';
       if (err instanceof z.ZodError) {
-        err = err.issues.map((e) => ({ path: e.path, message: e.message }));
+        err.issues.forEach((e) => {
+          const field = e.path[0];
+          const message = e.message;
+
+          if (errorMessages[field]) {
+            errorMessages[field].push(message);
+          } else {
+            errorMessages[field] = [message];
+          }
+        });
+
+        returnMessage = Object.entries(errorMessages)
+          .map(
+            ([field, messages]) =>
+              `This field ${field}: ${messages.join(', ')}`,
+          )
+          .join('; ');
       }
-      return res.status(status.BAD_REQUEST).json({
-        status: 'failed',
-        error: err,
-      });
+      return errorResponse(res, returnMessage, status.BAD_REQUEST);
     }
   };
