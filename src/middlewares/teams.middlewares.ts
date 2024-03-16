@@ -25,6 +25,9 @@ export const checkTeamExistence = async (
         status.NOT_FOUND,
       );
     }
+
+    req.body.team = existingTeam;
+
     next();
   } catch (error) {
     return errorResponse(res, ERROR_MESSAGES.INTERNAL_SERVER_ERROR);

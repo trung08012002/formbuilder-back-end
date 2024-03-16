@@ -14,7 +14,9 @@ export const checkUserExistence = async (
 ) => {
   try {
     const userId = req.session.userId;
+
     const existingUser = await usersService.getUserByID(userId);
+
     if (!existingUser) {
       return errorResponse(
         res,
@@ -22,6 +24,9 @@ export const checkUserExistence = async (
         status.NOT_FOUND,
       );
     }
+
+    req.body.user = existingUser;
+
     next();
   } catch (error) {
     return errorResponse(res, ERROR_MESSAGES.INTERNAL_SERVER_ERROR);

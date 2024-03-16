@@ -56,4 +56,10 @@ export const UpdateUserSchema = z.object({
   organizationLogo: z.string().optional(),
 });
 
-export default UpdateUserSchema;
+export type LoginSchemaType = z.infer<typeof LoginSchema>;
+
+export type SignUpSchemaType = z.infer<typeof SignUpSchema>;
+
+export type ChangePasswordSchemaType = z.infer<typeof ChangePasswordSchema>;
+
+export type UpdateUserSchemaType = z.infer<typeof UpdateUserSchema>;

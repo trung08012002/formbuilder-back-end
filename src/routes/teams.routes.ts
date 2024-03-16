@@ -22,6 +22,7 @@ const teamsController: TeamsController = getTeamsController();
 teamsRoute.get(
   ROUTES.TEAM.GET_TEAM_DETAILS,
   verifyToken,
+  checkUserExistence,
   checkTeamExistence,
   teamsController.getTeamDetails,
 );
@@ -41,6 +42,7 @@ teamsRoute.post(
 teamsRoute.patch(
   ROUTES.TEAM.UPDATE_TEAM,
   verifyToken,
+  checkUserExistence,
   checkTeamExistence,
   validateUpdateTeamSchema,
   teamsController.updateTeam,
@@ -48,6 +50,7 @@ teamsRoute.patch(
 teamsRoute.patch(
   ROUTES.TEAM.ADD_MEMBER,
   verifyToken,
+  checkUserExistence,
   checkTeamExistence,
   validateAddTeamMemberSchema,
   teamsController.addTeamMember,
@@ -55,6 +58,7 @@ teamsRoute.patch(
 teamsRoute.patch(
   ROUTES.TEAM.REMOVE_MEMBER,
   verifyToken,
+  checkUserExistence,
   checkTeamExistence,
   validateRemoveTeamMemberSchema,
   teamsController.removeTeamMember,
@@ -62,6 +66,7 @@ teamsRoute.patch(
 teamsRoute.delete(
   ROUTES.TEAM.DELETE_TEAM,
   verifyToken,
+  checkUserExistence,
   checkTeamExistence,
   teamsController.deleteTeam,
 );

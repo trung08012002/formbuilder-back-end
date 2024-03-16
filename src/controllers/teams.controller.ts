@@ -1,7 +1,8 @@
-import { Prisma } from '@prisma/client';
+import { Prisma, Team } from '@prisma/client';
 import { Request, Response } from 'express';
-import { ParamsDictionary } from 'express-serve-static-core';
 import status from 'http-status';
+
+import { CustomRequest } from '@/types/customRequest.types';
 
 import {
   ERROR_MESSAGES,
@@ -57,15 +58,16 @@ export class TeamsController {
     }
   };
 
-  public getTeamDetails = async (req: Request, res: Response) => {
+  public getTeamDetails = async (
+    req: CustomRequest<{ team: Team }>,
+    res: Response,
+  ) => {
     try {
-      const { id } = req.params;
-      const teamId = Number(id);
       const userId = req.session.userId;
 
-      const team = await this.teamsService.getTeamById(teamId);
+      const { team } = req.body;
 
-      if (!canView(userId, team?.permissions as Prisma.JsonObject)) {
+      if (!canView(userId, team.permissions as Prisma.JsonObject)) {
         return errorResponse(
           res,
           ERROR_MESSAGES.ACCESS_DENIED,
@@ -84,11 +86,12 @@ export class TeamsController {
   };
 
   public createTeam = async (
-    req: Request<ParamsDictionary, unknown, CreateTeamSchemaType>,
+    req: CustomRequest<CreateTeamSchemaType>,
     res: Response,
   ) => {
     try {
       const { name, logoUrl } = req.body;
+
       const userId = req.session.userId;
 
       const newTeam = await this.teamsService.createTeam(name, logoUrl, userId);
@@ -108,18 +111,15 @@ export class TeamsController {
   };
 
   public updateTeam = async (
-    req: Request<ParamsDictionary, unknown, UpdateTeamSchemaType>,
+    req: CustomRequest<UpdateTeamSchemaType & { team: Team }>,
     res: Response,
   ) => {
     try {
-      const { id } = req.params;
-      const teamId = Number(id);
       const userId = req.session.userId;
-      const { name, logoUrl } = req.body;
 
-      const team = await this.teamsService.getTeamById(teamId);
+      const { name, logoUrl, team } = req.body;
 
-      if (!canEdit(userId, team?.permissions as Prisma.JsonObject)) {
+      if (!canEdit(userId, team.permissions as Prisma.JsonObject)) {
         return errorResponse(
           res,
           ERROR_MESSAGES.ACCESS_DENIED,
@@ -128,7 +128,7 @@ export class TeamsController {
       }
 
       const updatedTeam = await this.teamsService.updateTeam(
-        teamId,
+        team.id,
         name,
         logoUrl,
       );
@@ -146,15 +146,16 @@ export class TeamsController {
     }
   };
 
-  public deleteTeam = async (req: Request, res: Response) => {
+  public deleteTeam = async (
+    req: CustomRequest<{ team: Team }>,
+    res: Response,
+  ) => {
     try {
-      const { id } = req.params;
-      const teamId = Number(id);
       const userId = req.session.userId;
 
-      const team = await this.teamsService.getTeamById(teamId);
+      const { team } = req.body;
 
-      if (team?.creatorId !== userId) {
+      if (team.creatorId !== userId) {
         return errorResponse(
           res,
           ERROR_MESSAGES.ACCESS_DENIED,
@@ -162,7 +163,7 @@ export class TeamsController {
         );
       }
 
-      await this.teamsService.deleteTeam(teamId);
+      await this.teamsService.deleteTeam(team.id);
 
       return successResponse(
         res,
@@ -179,18 +180,15 @@ export class TeamsController {
   };
 
   public addTeamMember = async (
-    req: Request<ParamsDictionary, unknown, AddTeamMemberSchemaType>,
+    req: CustomRequest<AddTeamMemberSchemaType & { team: Team }>,
     res: Response,
   ) => {
     try {
-      const { id } = req.params;
-      const teamId = Number(id);
       const userId = req.session.userId;
-      const { email } = req.body;
 
-      const team = await this.teamsService.getTeamById(teamId);
+      const { email, team } = req.body;
 
-      if (!canEdit(userId, team?.permissions as Prisma.JsonObject)) {
+      if (!canEdit(userId, team.permissions as Prisma.JsonObject)) {
         return errorResponse(
           res,
           ERROR_MESSAGES.ACCESS_DENIED,
@@ -208,13 +206,13 @@ export class TeamsController {
       }
 
       const memberExistsInTeam =
-        await this.teamsService.checkMemberExistsInTeam(teamId, foundUser.id);
+        await this.teamsService.checkMemberExistsInTeam(team.id, foundUser.id);
 
       if (memberExistsInTeam) {
         return errorResponse(res, TEAM_ERROR_MESSAGES.USER_EXISTS_IN_TEAM);
       }
 
-      await this.teamsService.addTeamMember(teamId, foundUser.id);
+      await this.teamsService.addTeamMember(team.id, foundUser.id);
 
       return successResponse(
         res,
@@ -231,18 +229,15 @@ export class TeamsController {
   };
 
   public removeTeamMember = async (
-    req: Request<ParamsDictionary, unknown, RemoveTeamMemberSchemaType>,
+    req: CustomRequest<RemoveTeamMemberSchemaType & { team: Team }>,
     res: Response,
   ) => {
     try {
-      const { id } = req.params;
-      const teamId = Number(id);
       const userId = req.session.userId;
-      const { memberIds } = req.body;
 
-      const team = await this.teamsService.getTeamById(teamId);
+      const { memberIds, team } = req.body;
 
-      if (!canEdit(userId, team?.permissions as Prisma.JsonObject)) {
+      if (!canEdit(userId, team.permissions as Prisma.JsonObject)) {
         return errorResponse(
           res,
           ERROR_MESSAGES.ACCESS_DENIED,
@@ -251,7 +246,7 @@ export class TeamsController {
       }
 
       for (const memberId of memberIds) {
-        if (memberId === team?.creatorId) {
+        if (memberId === team.creatorId) {
           return errorResponse(
             res,
             TEAM_ERROR_MESSAGES.CAN_NOT_REMOVE_TEAM_OWNER,
@@ -264,7 +259,7 @@ export class TeamsController {
         }
 
         const memberExistsInTeam =
-          await this.teamsService.checkMemberExistsInTeam(teamId, memberId);
+          await this.teamsService.checkMemberExistsInTeam(team.id, memberId);
         if (!memberExistsInTeam) {
           return errorResponse(
             res,
@@ -273,7 +268,7 @@ export class TeamsController {
         }
       }
 
-      await this.teamsService.removeTeamMember(teamId, memberIds);
+      await this.teamsService.removeTeamMember(team.id, memberIds);
 
       return successResponse(
         res,

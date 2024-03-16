@@ -1,14 +1,30 @@
+import { User } from '@prisma/client';
 import { Request, Response } from 'express';
 import status from 'http-status';
+
+import { CustomRequest } from '@/types/customRequest.types';
 
 import {
   ERROR_MESSAGES,
   USER_ERROR_MESSAGES,
   USER_SUCCESS_MESSAGES,
 } from '../constants';
+import {
+  ChangePasswordSchemaType,
+  UpdateUserSchemaType,
+} from '../schemas/users.schemas';
 import { AuthService, getAuthService } from '../services/auth.service';
 import { getUsersService, UsersService } from '../services/users.service';
 import { comparePassword, errorResponse, successResponse } from '../utils';
+
+let instance: UsersController | null = null;
+
+export const getUsersController = () => {
+  if (!instance) {
+    instance = new UsersController();
+  }
+  return instance;
+};
 
 export class UsersController {
   private usersService: UsersService;
@@ -37,10 +53,8 @@ export class UsersController {
         res,
         returnUsers,
         USER_SUCCESS_MESSAGES.GET_LIST_USER,
-        status.OK,
       );
     } catch (error) {
-      console.error('Error in get list users:', error);
       return errorResponse(
         res,
         ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
@@ -49,15 +63,12 @@ export class UsersController {
     }
   };
 
-  public getUserProfile = async (req: Request, res: Response) => {
+  public getUserProfile = async (
+    req: CustomRequest<{ user: User }>,
+    res: Response,
+  ) => {
     try {
-      const id = req.session.userId;
-
-      if (!id) return errorResponse(res, USER_ERROR_MESSAGES.REQUIRED_ID);
-
-      const user = await this.usersService.getUserByID(Number(id));
-
-      if (!user) return errorResponse(res, USER_ERROR_MESSAGES.USER_NOT_FOUND);
+      const { user } = req.body;
 
       const returnUser = {
         username: user.username,
@@ -69,14 +80,8 @@ export class UsersController {
         updatedAt: user.updatedAt,
       };
 
-      return successResponse(
-        res,
-        returnUser,
-        USER_SUCCESS_MESSAGES.GET_USER,
-        status.OK,
-      );
+      return successResponse(res, returnUser, USER_SUCCESS_MESSAGES.GET_USER);
     } catch (error) {
-      console.error('Error in get user by id:', error);
       return errorResponse(
         res,
         ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
@@ -87,20 +92,25 @@ export class UsersController {
 
   public delUserByID = async (req: Request, res: Response) => {
     try {
-      const { id } = req.params;
+      const { id: userId } = req.params;
 
-      if (!id) return errorResponse(res, USER_ERROR_MESSAGES.REQUIRED_ID);
+      const foundUser = await this.usersService.getUserByID(Number(userId));
 
-      await this.usersService.delUserByID(Number(id));
+      if (!foundUser)
+        return errorResponse(
+          res,
+          USER_ERROR_MESSAGES.USER_NOT_FOUND,
+          status.NOT_FOUND,
+        );
+
+      await this.usersService.delUserByID(Number(userId));
 
       return successResponse(
         res,
         {},
         USER_SUCCESS_MESSAGES.DELETE_USER_SUCCESS,
-        status.OK,
       );
     } catch (error) {
-      console.error('Error in delete user:', error);
       return errorResponse(
         res,
         ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
@@ -109,28 +119,23 @@ export class UsersController {
     }
   };
 
-  public changePassword = async (req: Request, res: Response) => {
+  public changePassword = async (
+    req: CustomRequest<ChangePasswordSchemaType & { user: User }>,
+    res: Response,
+  ) => {
     try {
-      const id = req.session.userId;
-      const { currentPassword, newPassword } = req.body;
+      const { currentPassword, newPassword, user } = req.body;
 
-      if (!id) return errorResponse(res, USER_ERROR_MESSAGES.REQUIRED_ID);
-
-      const user = await this.usersService.getUserByID(Number(id));
-
-      if (!user) return errorResponse(res, USER_ERROR_MESSAGES.USER_NOT_FOUND);
-
-      if (!comparePassword(currentPassword, user.password))
+      if (!comparePassword(currentPassword, user.password ?? ''))
         return errorResponse(res, USER_ERROR_MESSAGES.INCORRECT_PASSWORD);
 
       if (currentPassword === newPassword)
-        return errorResponse(res, USER_ERROR_MESSAGES.DIFFERENT_PASSWORD);
+        return errorResponse(res, USER_ERROR_MESSAGES.INVALID_NEW_PASSWORD);
 
-      await this.usersService.changePassword(Number(id), newPassword);
+      await this.usersService.changePassword(Number(user.id), newPassword);
 
-      return successResponse(res, USER_SUCCESS_MESSAGES.CHANGE_PW_SUCCESS);
+      return successResponse(res, {}, USER_SUCCESS_MESSAGES.CHANGE_PW_SUCCESS);
     } catch (error) {
-      console.error('Error in change password of user:', error);
       return errorResponse(
         res,
         ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
@@ -139,20 +144,22 @@ export class UsersController {
     }
   };
 
-  public updateUserProfile = async (req: Request, res: Response) => {
+  public updateUserProfile = async (
+    req: CustomRequest<UpdateUserSchemaType>,
+    res: Response,
+  ) => {
     try {
-      const id = req.session.userId;
+      const userId = req.session.userId;
       const { username, email, avatarUrl, organizationName, organizationLogo } =
         req.body;
 
-      const isExistedUser = await this.authService.checkExist(email);
+      if (email) {
+        const isRegisteredEmail = await this.authService.checkExist(email);
+        if (isRegisteredEmail)
+          return errorResponse(res, USER_ERROR_MESSAGES.USER_ALREADY_EXISTS);
+      }
 
-      if (isExistedUser)
-        return errorResponse(res, USER_ERROR_MESSAGES.USER_ALREADY_EXISTS);
-
-      if (!id) return errorResponse(res, USER_ERROR_MESSAGES.REQUIRED_ID);
-
-      await this.usersService.updateUserByID(Number(id), {
+      await this.usersService.updateUserByID(Number(userId), {
         username,
         email,
         avatarUrl,
@@ -160,11 +167,12 @@ export class UsersController {
         organizationLogo,
       });
 
-      return successResponse(res, {
-        message: USER_SUCCESS_MESSAGES.UPDATE_USER_SUCCESS,
-      });
+      return successResponse(
+        res,
+        {},
+        USER_SUCCESS_MESSAGES.UPDATE_USER_SUCCESS,
+      );
     } catch (error) {
-      console.error('Error in update user:', error);
       return errorResponse(
         res,
         ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
@@ -173,12 +181,3 @@ export class UsersController {
     }
   };
 }
-
-let instance: UsersController | null = null;
-
-export const getUsersController = () => {
-  if (!instance) {
-    instance = new UsersController();
-  }
-  return instance;
-};

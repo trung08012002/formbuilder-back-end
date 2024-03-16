@@ -2,7 +2,7 @@ import { hashSync } from 'bcrypt';
 
 import prisma from '../configs/db.config';
 import { SALT_ROUNDS } from '../configs/secrets';
-import type { UpdateUserInput } from '../types/users.types';
+import { UpdateUserSchemaType } from '../schemas/users.schemas';
 
 let instance: UsersService | null = null;
 
@@ -30,18 +30,18 @@ export class UsersService {
       },
     });
 
-  public changePassword = (id: number, password: string) =>
+  public changePassword = (id: number, newPassword: string) =>
     prisma.user.update({
       where: {
         id,
       },
       data: {
-        password: hashSync(password, SALT_ROUNDS),
+        password: hashSync(newPassword, SALT_ROUNDS),
         passwordChangedAt: new Date(Date.now()),
       },
     });
 
-  public updateUserByID = (id: number, user: UpdateUserInput) =>
+  public updateUserByID = (id: number, user: UpdateUserSchemaType) =>
     prisma.user.update({
       where: {
         id,

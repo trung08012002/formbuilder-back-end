@@ -1,11 +1,14 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import status from 'http-status';
+
+import { CustomRequest } from '@/types/customRequest.types';
 
 import {
   ERROR_MESSAGES,
   USER_ERROR_MESSAGES,
   USER_SUCCESS_MESSAGES,
 } from '../constants';
+import { LoginSchemaType, SignUpSchemaType } from '../schemas/users.schemas';
 import { AuthService, getAuthService } from '../services/auth.service';
 import {
   comparePassword,
@@ -14,6 +17,15 @@ import {
   successResponse,
 } from '../utils';
 
+let instance: AuthController | null = null;
+
+export const getAuthController = () => {
+  if (!instance) {
+    instance = new AuthController();
+  }
+  return instance;
+};
+
 export class AuthController {
   private authService: AuthService;
 
@@ -21,7 +33,10 @@ export class AuthController {
     this.authService = getAuthService();
   }
 
-  public signup = async (req: Request, res: Response) => {
+  public signup = async (
+    req: CustomRequest<SignUpSchemaType>,
+    res: Response,
+  ) => {
     try {
       const { email, password, username } = req.body;
       const isExistedUser = await this.authService.checkExist(email);
@@ -47,7 +62,6 @@ export class AuthController {
         USER_SUCCESS_MESSAGES.USER_CREATED,
       );
     } catch (error) {
-      console.error('Error in signup:', error);
       return errorResponse(
         res,
         ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
@@ -56,7 +70,7 @@ export class AuthController {
     }
   };
 
-  public login = async (req: Request, res: Response) => {
+  public login = async (req: CustomRequest<LoginSchemaType>, res: Response) => {
     try {
       const { email, password } = req.body;
       const user = await this.authService.getUserByEmail(email);
@@ -78,7 +92,6 @@ export class AuthController {
         USER_SUCCESS_MESSAGES.LOGIN_SUCCESS,
       );
     } catch (error) {
-      console.error('Error in login:', error);
       return errorResponse(
         res,
         ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
@@ -87,12 +100,3 @@ export class AuthController {
     }
   };
 }
-
-let instance: AuthController | null = null;
-
-export const getAuthController = () => {
-  if (!instance) {
-    instance = new AuthController();
-  }
-  return instance;
-};

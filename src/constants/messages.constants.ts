@@ -30,12 +30,12 @@ export const USER_SUCCESS_MESSAGES = {
 
 export const USER_ERROR_MESSAGES = {
   USER_ALREADY_EXISTS:
-    'User with this email already exists. Please try another email',
+    'User with this email has already existed. Please try another email',
   USER_NOT_FOUND: 'User does not exist',
   INCORRECT_INFORMATION: 'Incorrect email or password',
   NO_TOKEN_PROVIDED: 'No token provided',
   INVALID_TOKEN: 'Invalid token',
-  REQUIRED_ID: 'Provide Id is required',
+  REQUIRED_ID: 'User ID is required',
   REQUIRED_EMAIL: 'Email is required',
   NO_EMPTY_EMAIL: 'Email cannot be empty',
   INVALID_EMAIL: 'Invalid email',
@@ -46,8 +46,8 @@ export const USER_ERROR_MESSAGES = {
   REQUIRED_SPECIAL_CHARS: 'Must contain at least one special character',
   REQUIRED_USERNAME: 'Username is required',
   NO_EMPTY_USERNAME: 'Username cannot be empty',
-  INCORRECT_PASSWORD: 'Password do not match',
-  DIFFERENT_PASSWORD: 'New password must be different',
+  INCORRECT_PASSWORD: 'Incorrect password',
+  INVALID_NEW_PASSWORD: 'New password must be different from your old password',
 };
 
 export const FORM_SUCCESS_MESSAGES = {
