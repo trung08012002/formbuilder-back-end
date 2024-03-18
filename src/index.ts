@@ -5,7 +5,7 @@ import { NOT_FOUND } from 'http-status';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 
-import { FRONT_END_URL, PORT } from './configs/secrets';
+import { PORT } from './configs/secrets';
 import authRoute from './routes/auth.routes';
 import foldersRoute from './routes/folders.routes';
 import formsRoute from './routes/forms.routes';
@@ -26,12 +26,7 @@ const options: swaggerJSDoc.Options = {
 };
 const swaggerDocument = swaggerJSDoc(options);
 
-const corsOptions = {
-  origin: FRONT_END_URL,
-  optionsSuccessStatus: 200,
-};
-
-app.use(cors(corsOptions));
+app.use(cors());
 
 app.use(
   ROUTES.API_DOCS.PATH,
