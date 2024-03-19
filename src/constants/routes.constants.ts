@@ -41,4 +41,10 @@ export const ROUTES = {
     ADD_MEMBER: '/:id/add-member',
     REMOVE_MEMBER: '/:id/remove-member',
   },
+  RESPONSE: {
+    PATH: '/responses',
+    GET_RESPONSES_BY_FORMID: '/:formId',
+    CREATE_RESPONSE: '/:formId',
+    DELETE_RESPONSE: '/:formId/:id',
+  },
 };

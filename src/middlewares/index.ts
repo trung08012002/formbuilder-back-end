@@ -1,3 +1,6 @@
+import { createdResponseValidation } from '@/schemas/createResponse.schemas';
+import { filterObjectSchema } from '@/schemas/filterObject.schemas';
+
 import {
   CreateFolderSchema,
   UpdateFolderSchema,
@@ -18,6 +21,7 @@ import {
 
 import { verifyToken } from './authorization.middlewares';
 import { validateConfigSchema } from './forms.middlewares';
+import { checkFormExistence } from './responses.middlewares';
 import { checkTeamExistence } from './teams.middlewares';
 import { checkUserExistence } from './users.middlewares';
 import { validate } from './validation.middlewares';
@@ -39,15 +43,21 @@ const validateUpdateTeamSchema = validate(UpdateTeamSchema);
 const validateAddTeamMemberSchema = validate(AddTeamMemberSchema);
 const validateRemoveTeamMemberSchema = validate(RemoveTeamMemberSchema);
 
+const validateCreatedResponse = validate(createdResponseValidation);
+const validateFilterObject = validate(filterObjectSchema);
+
 export {
+  checkFormExistence,
   checkTeamExistence,
   checkUserExistence,
   validateAddTeamMemberSchema,
   validateChangePasswordInput,
   validateConfigSchema,
+  validateCreatedResponse,
   validateCreateFolderSchema,
   validateCreateFormSchema,
   validateCreateTeamSchema,
+  validateFilterObject,
   validateLoginInput,
   validateRemoveTeamMemberSchema,
   validateSignUpInput,

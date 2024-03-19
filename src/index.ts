@@ -10,6 +10,7 @@ import authRoute from './routes/auth.routes';
 import foldersRoute from './routes/folders.routes';
 import formsRoute from './routes/forms.routes';
 import imagesRoute from './routes/images.routes';
+import responseRoute from './routes/responses.routes';
 import teamsRoute from './routes/teams.routes';
 import usersRoute from './routes/users.routes';
 import { swaggerDefinition } from './swaggerDocs/swaggerDefinition';
@@ -49,6 +50,7 @@ app.use(ROUTES.IMAGE.PATH, imagesRoute);
 app.use(ROUTES.FORM.PATH, formsRoute);
 
 app.use(ROUTES.FOLDER.PATH, foldersRoute);
+app.use(ROUTES.RESPONSE.PATH, responseRoute);
 
 app.use(ROUTES.TEAM.PATH, teamsRoute);
 

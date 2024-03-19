@@ -32,23 +32,24 @@ model User {
 }
 
 model Form {
-  id                Int       @id @default(autoincrement())
+  id                Int        @id @default(autoincrement())
   title             String
-  logoUrl           String?   @map("logo_url")
+  logoUrl           String?    @map("logo_url")
   settings          Json
-  totalSubmissions  Int?      @default(0) @map("total_submissions")
+  totalSubmissions  Int        @default(0) @map("total_submissions")
   elements          Json[]
   permissions       Json?
-  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt         DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
-  deletedAt         DateTime? @map("deleted_at") @db.Timestamptz(3)
-  creator           User      @relation("CreatedForms", fields: [creatorId], references: [id])
-  creatorId         Int       @map("creator_id")
-  favouritedByUsers User[]    @relation("FavouriteForms")
-  folderId          Int?      @map("folder_id")
-  folder            Folder?   @relation(fields: [folderId], references: [id])
-  team              Team?     @relation(fields: [teamId], references: [id])
-  teamId            Int?      @map("team_id")
+  createdAt         DateTime   @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt         DateTime?  @updatedAt @map("updated_at") @db.Timestamptz(3)
+  deletedAt         DateTime?  @map("deleted_at") @db.Timestamptz(3)
+  creator           User       @relation("CreatedForms", fields: [creatorId], references: [id])
+  creatorId         Int        @map("creator_id")
+  favouritedByUsers User[]     @relation("FavouriteForms")
+  folderId          Int?       @map("folder_id")
+  folder            Folder?    @relation(fields: [folderId], references: [id])
+  team              Team?      @relation(fields: [teamId], references: [id])
+  teamId            Int?       @map("team_id")
+  responses         Response[]
 
   @@map("forms")
 }
@@ -82,4 +83,16 @@ model Team {
   members     User[]    @relation("TeamMembers")
 
   @@map("teams")
+}
+
+model Response {
+  id        Int       @id @default(autoincrement())
+  formId    Int       @map("form_id")
+  formAnswers   Json[]
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
+  form      Form      @relation(fields: [formId], references: [id])
+
+  @@map("responses")
 }

@@ -1,4 +1,5 @@
 export const ERROR_MESSAGES = {
+  ID_NOT_FOUND: 'Form ID can not be empty',
   INTERNAL_SERVER_ERROR: 'Internal Server Error',
   ACCESS_DENIED: 'Access denied',
   NOT_FOUND_ROUTES: 'No routes found',
