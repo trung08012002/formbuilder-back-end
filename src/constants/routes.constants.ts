@@ -30,6 +30,10 @@ export const ROUTES = {
     CREATE_FORM_IN_TEAM: '/team/:teamId',
     CREATE_FORM_IN_MY_FOLDER: '/folder/:folderId',
     CREATE_FORM_IN_FOLDER_OF_TEAM: '/folder/:folderId/team/:teamId',
+    ADD_TO_FOLDER: '/:formId/folder/:folderId/add',
+    REMOVE_FROM_FOLDER: '/:formId/folder/:folderId/remove',
+    MOVE_TO_TEAM: '/:formId/team/:teamId/add',
+    MOVE_BACK_TO_MY_FORMS: '/:formId/team/:teamId/remove',
   },
   FOLDER: {
     PATH: '/folders',

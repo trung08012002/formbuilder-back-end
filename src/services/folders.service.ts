@@ -37,7 +37,6 @@ export class FoldersService {
     payload: CreateFolderSchemaType & { teamId: number },
   ) =>
     prisma.$transaction(async (tx) => {
-      // get members' ids in team
       const membersInTeam = await tx.team
         .findUnique({
           where: {

@@ -45,7 +45,6 @@ export class FormsService {
     payload: CreateFormSchemaType & { teamId: number },
   ) =>
     prisma.$transaction(async (tx) => {
-      // get members' ids in team
       const membersInTeam = await tx.team
         .findUnique({
           where: {
@@ -126,7 +125,6 @@ export class FormsService {
     payload: CreateFormSchemaType & { folderId: number; teamId: number },
   ) =>
     prisma.$transaction(async (tx) => {
-      // get members' ids in team
       const membersInTeam = await tx.team
         .findUnique({
           where: {
@@ -358,4 +356,113 @@ export class FormsService {
       },
     });
   };
+
+  public addToFolder = (formId: number, folderId: number) =>
+    prisma.form.update({
+      where: {
+        id: formId,
+      },
+      data: {
+        folder: {
+          connect: {
+            id: folderId,
+          },
+        },
+      },
+    });
+
+  public removeFromFolder = (formId: number) =>
+    prisma.form.update({
+      where: {
+        id: formId,
+      },
+      data: {
+        folder: {
+          disconnect: true,
+        },
+      },
+    });
+
+  public moveToTeam = (formId: number, teamId: number) =>
+    prisma.$transaction(async (tx) => {
+      const membersInTeam = await tx.team
+        .findUnique({
+          where: {
+            id: teamId,
+          },
+        })
+        .members();
+      const memberIds = membersInTeam?.map((member) => member.id);
+
+      // grant all members in team access to the form
+      let newFormPermissions = {};
+      if (!memberIds) {
+        throw Error(TEAM_ERROR_MESSAGES.NO_MEMBERS_IN_TEAM);
+      }
+      memberIds.map(
+        (memberId) =>
+          (newFormPermissions = {
+            ...newFormPermissions,
+            [memberId]: [
+              PERMISSIONS.VIEW,
+              PERMISSIONS.EDIT,
+              PERMISSIONS.DELETE,
+            ],
+          }),
+      );
+
+      await tx.form.update({
+        where: {
+          id: formId,
+        },
+        data: {
+          permissions: newFormPermissions,
+          team: {
+            connect: {
+              id: teamId,
+            },
+          },
+        },
+      });
+    });
+
+  public moveBackToMyForms = (userId: number, formId: number, teamId: number) =>
+    prisma.$transaction(async (tx) => {
+      const membersInTeam = await tx.team
+        .findUnique({
+          where: {
+            id: teamId,
+          },
+        })
+        .members();
+      const memberIds = membersInTeam?.map((member) => member.id);
+
+      const form = await tx.form.findUnique({
+        where: {
+          id: formId,
+        },
+        select: {
+          permissions: true,
+        },
+      });
+      const formPermissions = form?.permissions as Prisma.JsonObject;
+
+      const newFormPermissions = {
+        ..._omit(formPermissions, memberIds!),
+        [userId]: [PERMISSIONS.VIEW, PERMISSIONS.EDIT, PERMISSIONS.DELETE],
+      };
+
+      // remove form from team and update permissions for form
+      await tx.form.update({
+        where: {
+          id: formId,
+        },
+        data: {
+          permissions: newFormPermissions,
+          team: {
+            disconnect: true,
+          },
+        },
+      });
+    });
 }

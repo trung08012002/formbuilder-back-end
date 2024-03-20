@@ -105,5 +105,39 @@ formsRoute.patch(
   checkFormExistence,
   formsController.addToFavourites,
 );
+formsRoute.patch(
+  ROUTES.FORM.ADD_TO_FOLDER,
+  verifyToken,
+  checkUserExistence,
+  checkFormExistence,
+  checkFolderExistence,
+  formsController.addToFolder,
+);
+formsRoute.patch(
+  ROUTES.FORM.REMOVE_FROM_FOLDER,
+  verifyToken,
+  checkUserExistence,
+  checkFormExistence,
+  checkFolderExistence,
+  formsController.removeFromFolder,
+);
+formsRoute.patch(
+  ROUTES.FORM.MOVE_TO_TEAM,
+  verifyToken,
+  checkUserExistence,
+  checkFormExistence,
+  checkTeamExistence,
+  checkMemberExistsInTeam,
+  formsController.moveToTeam,
+);
+formsRoute.patch(
+  ROUTES.FORM.MOVE_BACK_TO_MY_FORMS,
+  verifyToken,
+  checkUserExistence,
+  checkFormExistence,
+  checkTeamExistence,
+  checkMemberExistsInTeam,
+  formsController.moveBackToMyForms,
+);
 
 export default formsRoute;

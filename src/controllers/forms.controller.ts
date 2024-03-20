@@ -415,4 +415,120 @@ export class FormsController {
       return errorResponse(res);
     }
   };
+
+  public addToFolder = async (
+    req: CustomRequest<{ form: Form; folder: Folder }>,
+    res: Response,
+  ) => {
+    try {
+      const { userId } = req.session;
+      const { form, folder } = req.body;
+
+      if (
+        !canEdit(userId, form.permissions as Prisma.JsonObject) ||
+        !canEdit(userId, folder.permissions as Prisma.JsonObject)
+      ) {
+        return errorResponse(
+          res,
+          ERROR_MESSAGES.ACCESS_DENIED,
+          status.FORBIDDEN,
+        );
+      }
+
+      await this.formsService.addToFolder(form.id, folder.id);
+      return successResponse(
+        res,
+        {},
+        FORM_SUCCESS_MESSAGES.ADD_TO_FOLDER_SUCCESS,
+      );
+    } catch (error) {
+      return errorResponse(res);
+    }
+  };
+
+  public removeFromFolder = async (
+    req: CustomRequest<{ form: Form; folder: Folder }>,
+    res: Response,
+  ) => {
+    try {
+      const { userId } = req.session;
+      const { form, folder } = req.body;
+
+      if (
+        !canEdit(userId, form.permissions as Prisma.JsonObject) ||
+        !canEdit(userId, folder.permissions as Prisma.JsonObject)
+      ) {
+        return errorResponse(
+          res,
+          ERROR_MESSAGES.ACCESS_DENIED,
+          status.FORBIDDEN,
+        );
+      }
+
+      await this.formsService.removeFromFolder(form.id);
+      return successResponse(
+        res,
+        {},
+        FORM_SUCCESS_MESSAGES.REMOVE_FROM_FOLDER_SUCCESS,
+      );
+    } catch (error) {
+      return errorResponse(res);
+    }
+  };
+
+  public moveToTeam = async (
+    req: CustomRequest<{ form: Form; team: Team }>,
+    res: Response,
+  ) => {
+    try {
+      const { userId } = req.session;
+      const { form, team } = req.body;
+
+      if (!canEdit(userId, form.permissions as Prisma.JsonObject)) {
+        return errorResponse(
+          res,
+          ERROR_MESSAGES.ACCESS_DENIED,
+          status.FORBIDDEN,
+        );
+      }
+
+      await this.formsService.moveToTeam(form.id, team.id);
+
+      return successResponse(
+        res,
+        {},
+        FORM_SUCCESS_MESSAGES.MOVE_TO_TEAM_SUCCESS,
+      );
+    } catch (error) {
+      return errorResponse(res);
+    }
+  };
+
+  public moveBackToMyForms = async (
+    req: CustomRequest<{ form: Form; team: Team }>,
+    res: Response,
+  ) => {
+    try {
+      const { userId } = req.session;
+      const { form, team } = req.body;
+
+      if (form.creatorId !== userId) {
+        return errorResponse(
+          res,
+          ERROR_MESSAGES.ACCESS_DENIED,
+          status.FORBIDDEN,
+        );
+      }
+
+      await this.formsService.moveBackToMyForms(userId, form.id, team.id);
+
+      return successResponse(
+        res,
+        {},
+        FORM_SUCCESS_MESSAGES.REMOVE_FROM_TEAM_SUCCESS,
+      );
+    } catch (error) {
+      return errorResponse(res);
+    }
+  };
 }

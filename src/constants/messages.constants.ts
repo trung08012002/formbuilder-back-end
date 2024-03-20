@@ -63,6 +63,12 @@ export const FORM_SUCCESS_MESSAGES = {
   ADD_TO_FAVOURITES_SUCCESS: 'This form has been added to your favourite forms',
   REMOVE_FROM_FAVOURITES_SUCCESS:
     'This form has been removed from your favourite forms',
+  ADD_TO_FOLDER_SUCCESS: 'This form has been added to folder successfully',
+  REMOVE_FROM_FOLDER_SUCCESS:
+    'This form has been removed from folder successfully',
+  MOVE_TO_TEAM_SUCCESS: 'This form has been moved to team successfully',
+  REMOVE_FROM_TEAM_SUCCESS:
+    'This form has been moved back to your forms successfully',
 };
 
 export const FORM_ERROR_MESSAGES = {
