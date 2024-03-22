@@ -1,10 +1,14 @@
+import { Prisma, PrismaClient } from '@prisma/client';
+import { DefaultArgs } from '@prisma/client/runtime/library';
+import _omit from 'lodash.omit';
+
 import prisma from '../configs/db.config';
 import { TEAM_ERROR_MESSAGES } from '../constants';
 import {
   CreateFormSchemaType,
   UpdateFormSchemaType,
 } from '../schemas/forms.schemas';
-import { GetFormsParams } from '../types/forms.types';
+import { GetFormsArgs } from '../types/forms.types';
 import { PERMISSIONS } from '../types/permissions.types';
 
 let instance: FormsService | null = null;
@@ -38,21 +42,20 @@ export class FormsService {
 
   public createFormInTeam = (
     userId: number,
-    teamId: number,
-    payload: CreateFormSchemaType,
+    payload: CreateFormSchemaType & { teamId: number },
   ) =>
     prisma.$transaction(async (tx) => {
       // get members' ids in team
       const membersInTeam = await tx.team
         .findUnique({
           where: {
-            id: teamId,
+            id: payload.teamId,
           },
         })
         .members();
       const memberIds = membersInTeam?.map((member) => member.id);
 
-      // update form permissions for all members in team
+      // grant all members in team access to the newly created form
       let formPermissions = {};
       if (!memberIds) {
         throw Error(TEAM_ERROR_MESSAGES.NO_MEMBERS_IN_TEAM);
@@ -83,7 +86,7 @@ export class FormsService {
           },
           team: {
             connect: {
-              id: teamId,
+              id: payload.teamId,
             },
           },
         },
@@ -92,34 +95,127 @@ export class FormsService {
       return createdForm;
     });
 
-  public getFormsByUserId = (userId: number, params: GetFormsParams) =>
+  public createFormInMyFolder = (
+    userId: number,
+    payload: CreateFormSchemaType & { folderId: number },
+  ) =>
+    prisma.form.create({
+      data: {
+        title: payload.title,
+        logoUrl: payload.logoUrl,
+        settings: payload.settings,
+        elements: payload.elements,
+        permissions: {
+          [userId]: [PERMISSIONS.VIEW, PERMISSIONS.EDIT, PERMISSIONS.DELETE],
+        },
+        creator: {
+          connect: {
+            id: userId,
+          },
+        },
+        folder: {
+          connect: {
+            id: payload.folderId,
+          },
+        },
+      },
+    });
+
+  public createFormInFolderOfTeam = (
+    userId: number,
+    payload: CreateFormSchemaType & { folderId: number; teamId: number },
+  ) =>
+    prisma.$transaction(async (tx) => {
+      // get members' ids in team
+      const membersInTeam = await tx.team
+        .findUnique({
+          where: {
+            id: payload.teamId,
+          },
+        })
+        .members();
+      const memberIds = membersInTeam?.map((member) => member.id);
+
+      // grant all members in team access to the newly created form
+      let formPermissions = {};
+      if (!memberIds) {
+        throw Error(TEAM_ERROR_MESSAGES.NO_MEMBERS_IN_TEAM);
+      }
+      memberIds.map(
+        (memberId) =>
+          (formPermissions = {
+            ...formPermissions,
+            [memberId]: [
+              PERMISSIONS.VIEW,
+              PERMISSIONS.EDIT,
+              PERMISSIONS.DELETE,
+            ],
+          }),
+      );
+
+      const createdForm = await tx.form.create({
+        data: {
+          title: payload.title,
+          logoUrl: payload.logoUrl,
+          settings: payload.settings,
+          elements: payload.elements,
+          permissions: formPermissions,
+          creator: {
+            connect: {
+              id: userId,
+            },
+          },
+          team: {
+            connect: {
+              id: payload.teamId,
+            },
+          },
+          folder: {
+            connect: {
+              id: payload.folderId,
+            },
+          },
+        },
+      });
+
+      return createdForm;
+    });
+
+  public getFormsByUserId = (userId: number, args: GetFormsArgs) =>
     prisma.form.findMany({
-      skip: params.offset,
-      take: params.limit,
+      skip: args.offset,
+      take: args.limit,
       where: {
         creatorId: userId,
+        folderId: args.folderId || undefined,
+        teamId: args.teamId || null,
         title: {
-          contains: params.searchText,
+          contains: args.searchText,
         },
-        deletedAt: params.isDeleted ? { not: null } : null,
-        favouritedByUsers: params.isFavourite
+        deletedAt: args.isDeleted ? { not: null } : null,
+        favouritedByUsers: args.isFavourite
           ? { some: { id: userId } }
           : undefined,
       },
       orderBy: {
-        [params.sortField]: params.sortDirection,
+        [args.sortField]: args.sortDirection,
       },
     });
 
   public getTotalFormsByUserId = (
     userId: number,
-    params: Pick<GetFormsParams, 'isDeleted' | 'isFavourite'>,
+    args: Pick<
+      GetFormsArgs,
+      'isDeleted' | 'isFavourite' | 'folderId' | 'teamId'
+    >,
   ) =>
     prisma.form.count({
       where: {
         creatorId: userId,
-        deletedAt: params.isDeleted ? { not: null } : null,
-        favouritedByUsers: params.isFavourite
+        folderId: args.folderId || undefined,
+        teamId: args.teamId || null,
+        deletedAt: args.isDeleted ? { not: null } : null,
+        favouritedByUsers: args.isFavourite
           ? { some: { id: userId } }
           : undefined,
       },
@@ -155,11 +251,29 @@ export class FormsService {
       },
     });
 
-  public hardDeleteForm = (formId: number) =>
-    prisma.form.delete({
+  public restoreForm = (formId: number) =>
+    prisma.form.update({
       where: {
         id: formId,
       },
+      data: {
+        deletedAt: null,
+      },
+    });
+
+  public hardDeleteForm = (formId: number) =>
+    prisma.$transaction(async (tx) => {
+      await tx.response.deleteMany({
+        where: {
+          formId,
+        },
+      });
+
+      await tx.form.delete({
+        where: {
+          id: formId,
+        },
+      });
     });
 
   public addToFavourites = (formId: number, userId: number) =>
@@ -214,4 +328,34 @@ export class FormsService {
         },
       })
       .favouritedByUsers();
+
+  public removeFormPermissions = async (
+    tx: Omit<
+      PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>,
+      '$connect' | '$disconnect' | '$on' | '$transaction' | '$use' | '$extends'
+    >,
+    formId: number,
+    memberIds: number[],
+  ) => {
+    const form = await tx.form.findUnique({
+      where: {
+        id: formId,
+      },
+      select: {
+        permissions: true,
+      },
+    });
+    const formPermissions = form?.permissions as Prisma.JsonObject;
+
+    const newFormPermissions = _omit(formPermissions, memberIds);
+
+    await tx.form.update({
+      where: {
+        id: formId,
+      },
+      data: {
+        permissions: newFormPermissions,
+      },
+    });
+  };
 }

@@ -20,9 +20,16 @@ import {
 } from '../schemas/users.schemas';
 
 import { verifyToken } from './authorization.middlewares';
-import { validateConfigSchema } from './forms.middlewares';
-import { checkFormExistence } from './responses.middlewares';
-import { checkTeamExistence } from './teams.middlewares';
+import {
+  checkFormExistence,
+  validateConfigSchema,
+  validateGetFormQueryParamsSchema,
+} from './forms.middlewares';
+import { checkResponseExistence } from './responses.middlewares';
+import {
+  checkMemberExistsInTeam,
+  checkTeamExistence,
+} from './teams.middlewares';
 import { checkUserExistence } from './users.middlewares';
 import { validate } from './validation.middlewares';
 
@@ -48,6 +55,8 @@ const validateFilterObject = validate(filterObjectSchema);
 
 export {
   checkFormExistence,
+  checkMemberExistsInTeam,
+  checkResponseExistence,
   checkTeamExistence,
   checkUserExistence,
   validateAddTeamMemberSchema,
@@ -58,6 +67,7 @@ export {
   validateCreateFormSchema,
   validateCreateTeamSchema,
   validateFilterObject,
+  validateGetFormQueryParamsSchema,
   validateLoginInput,
   validateRemoveTeamMemberSchema,
   validateSignUpInput,

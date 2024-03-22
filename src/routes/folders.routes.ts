@@ -6,6 +6,8 @@ import {
   getFoldersController,
 } from '../controllers/folders.controller';
 import {
+  checkMemberExistsInTeam,
+  checkTeamExistence,
   checkUserExistence,
   validateCreateFolderSchema,
   validateUpdateFolderSchema,
@@ -20,6 +22,7 @@ const foldersController: FoldersController = getFoldersController();
 foldersRoute.get(
   ROUTES.FOLDER.GET_FOLDER_DETAILS,
   verifyToken,
+  checkUserExistence,
   checkFolderExistence,
   foldersController.getFolderDetails,
 );
@@ -36,9 +39,19 @@ foldersRoute.post(
   validateCreateFolderSchema,
   foldersController.createFolder,
 );
+foldersRoute.post(
+  ROUTES.FOLDER.CREATE_FOLDER_IN_TEAM,
+  verifyToken,
+  checkUserExistence,
+  checkTeamExistence,
+  checkMemberExistsInTeam,
+  validateCreateFolderSchema,
+  foldersController.createFolderInTeam,
+);
 foldersRoute.patch(
   ROUTES.FOLDER.UPDATE_FOLDER,
   verifyToken,
+  checkUserExistence,
   checkFolderExistence,
   validateUpdateFolderSchema,
   foldersController.updateFolder,
@@ -46,6 +59,7 @@ foldersRoute.patch(
 foldersRoute.delete(
   ROUTES.FOLDER.DELETE_FOLDER,
   verifyToken,
+  checkUserExistence,
   checkFolderExistence,
   foldersController.deleteFolder,
 );

@@ -45,8 +45,8 @@ model Form {
   creator           User       @relation("CreatedForms", fields: [creatorId], references: [id])
   creatorId         Int        @map("creator_id")
   favouritedByUsers User[]     @relation("FavouriteForms")
-  folderId          Int?       @map("folder_id")
   folder            Folder?    @relation(fields: [folderId], references: [id])
+  folderId          Int?       @map("folder_id")
   team              Team?      @relation(fields: [teamId], references: [id])
   teamId            Int?       @map("team_id")
   responses         Response[]
@@ -57,7 +57,6 @@ model Form {
 model Folder {
   id          Int       @id @default(autoincrement())
   name        String
-  color       String?
   permissions Json?
   createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt   DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
@@ -65,6 +64,8 @@ model Folder {
   creator     User      @relation("CreatedFolders", fields: [creatorId], references: [id])
   creatorId   Int       @map("creator_id")
   forms       Form[]
+  team        Team?     @relation(fields: [teamId], references: [id])
+  teamId      Int?
 
   @@map("folders")
 }
@@ -81,18 +82,19 @@ model Team {
   creatorId   Int       @map("creator_id")
   forms       Form[]
   members     User[]    @relation("TeamMembers")
+  folders     Folder[]
 
   @@map("teams")
 }
 
 model Response {
-  id        Int       @id @default(autoincrement())
-  formId    Int       @map("form_id")
-  formAnswers   Json[]
-  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
-  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
-  form      Form      @relation(fields: [formId], references: [id])
+  id          Int       @id @default(autoincrement())
+  formAnswers Json[]
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
+  deletedAt   DateTime? @map("deleted_at") @db.Timestamptz(3)
+  form        Form      @relation(fields: [formId], references: [id])
+  formId      Int       @map("form_id")
 
   @@map("responses")
 }

@@ -1,4 +1,10 @@
+import { Prisma, PrismaClient } from '@prisma/client';
+import { DefaultArgs } from '@prisma/client/runtime/library';
+import _omit from 'lodash.omit';
+
 import prisma from '../configs/db.config';
+import { TEAM_ERROR_MESSAGES } from '../constants';
+import { CreateFolderSchemaType } from '../schemas/folders.schemas';
 import { PERMISSIONS } from '../types/permissions.types';
 
 let instance: FoldersService | null = null;
@@ -24,6 +30,58 @@ export class FoldersService {
           },
         },
       },
+    });
+
+  public createFolderInTeam = (
+    userId: number,
+    payload: CreateFolderSchemaType & { teamId: number },
+  ) =>
+    prisma.$transaction(async (tx) => {
+      // get members' ids in team
+      const membersInTeam = await tx.team
+        .findUnique({
+          where: {
+            id: payload.teamId,
+          },
+        })
+        .members();
+      const memberIds = membersInTeam?.map((member) => member.id);
+
+      // grant all members in team access to the newly created folder
+      let folderPermissions = {};
+      if (!memberIds) {
+        throw Error(TEAM_ERROR_MESSAGES.NO_MEMBERS_IN_TEAM);
+      }
+      memberIds.map(
+        (memberId) =>
+          (folderPermissions = {
+            ...folderPermissions,
+            [memberId]: [
+              PERMISSIONS.VIEW,
+              PERMISSIONS.EDIT,
+              PERMISSIONS.DELETE,
+            ],
+          }),
+      );
+
+      const createdFolder = await tx.folder.create({
+        data: {
+          name: payload.name,
+          permissions: folderPermissions,
+          creator: {
+            connect: {
+              id: userId,
+            },
+          },
+          team: {
+            connect: {
+              id: payload.teamId,
+            },
+          },
+        },
+      });
+
+      return createdFolder;
     });
 
   public getAllFoldersOfUser = (userId: number) =>
@@ -92,4 +150,34 @@ export class FoldersService {
         },
       });
     });
+
+  public removeFolderPermissions = async (
+    tx: Omit<
+      PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>,
+      '$connect' | '$disconnect' | '$on' | '$transaction' | '$use' | '$extends'
+    >,
+    folderId: number,
+    memberIds: number[],
+  ) => {
+    const folder = await tx.folder.findUnique({
+      where: {
+        id: folderId,
+      },
+      select: {
+        permissions: true,
+      },
+    });
+    const folderPermissions = folder?.permissions as Prisma.JsonObject;
+
+    const newFolderPermissions = _omit(folderPermissions, memberIds);
+
+    await tx.folder.update({
+      where: {
+        id: folderId,
+      },
+      data: {
+        permissions: newFolderPermissions,
+      },
+    });
+  };
 }

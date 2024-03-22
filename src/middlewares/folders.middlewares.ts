@@ -13,10 +13,9 @@ export const checkFolderExistence = async (
   next: NextFunction,
 ) => {
   try {
-    const { id } = req.params;
-    const folderId = Number(id);
+    const { folderId } = req.params;
 
-    const existingFolder = await foldersService.getFolderById(folderId);
+    const existingFolder = await foldersService.getFolderById(Number(folderId));
     if (!existingFolder) {
       return errorResponse(
         res,

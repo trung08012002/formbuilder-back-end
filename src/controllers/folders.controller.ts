@@ -1,4 +1,4 @@
-import { Folder, Prisma } from '@prisma/client';
+import { Folder, Prisma, Team } from '@prisma/client';
 import { Request, Response } from 'express';
 import status from 'http-status';
 
@@ -12,6 +12,7 @@ import {
   UpdateFolderSchemaType,
 } from '../schemas/folders.schemas';
 import { FoldersService, getFoldersService } from '../services/folders.service';
+import { getTeamsService, TeamsService } from '../services/teams.service';
 import { CustomRequest } from '../types/customRequest.types';
 import {
   canDelete,
@@ -32,9 +33,11 @@ export const getFoldersController = () => {
 
 export class FoldersController {
   private foldersService: FoldersService;
+  private teamsService: TeamsService;
 
   public constructor() {
     this.foldersService = getFoldersService();
+    this.teamsService = getTeamsService();
   }
 
   public createFolder = async (
@@ -46,6 +49,33 @@ export class FoldersController {
       const userId = req.session.userId;
 
       const newFolder = await this.foldersService.createFolder(userId, name);
+      return successResponse(
+        res,
+        newFolder,
+        FOLDER_SUCCESS_MESSAGES.CREATE_FOLDER_SUCCESS,
+        status.CREATED,
+      );
+    } catch (error) {
+      return errorResponse(
+        res,
+        ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
+        status.INTERNAL_SERVER_ERROR,
+      );
+    }
+  };
+
+  public createFolderInTeam = async (
+    req: CustomRequest<CreateFolderSchemaType & { team: Team }>,
+    res: Response,
+  ) => {
+    try {
+      const { name, team } = req.body;
+      const userId = req.session.userId;
+
+      const newFolder = await this.foldersService.createFolderInTeam(userId, {
+        name,
+        teamId: team.id,
+      });
       return successResponse(
         res,
         newFolder,
@@ -109,8 +139,6 @@ export class FoldersController {
     res: Response,
   ) => {
     try {
-      const { id } = req.params;
-      const folderId = Number(id);
       const userId = req.session.userId;
 
       const folder = req.body.folder;
@@ -126,7 +154,7 @@ export class FoldersController {
       const { name } = req.body;
 
       const updatedFolder = await this.foldersService.updateFolder(
-        folderId,
+        folder.id,
         name,
       );
       return successResponse(
@@ -148,8 +176,6 @@ export class FoldersController {
     res: Response,
   ) => {
     try {
-      const { id } = req.params;
-      const folderId = Number(id);
       const userId = req.session.userId;
 
       const folder = req.body.folder;
@@ -162,7 +188,7 @@ export class FoldersController {
         );
       }
 
-      await this.foldersService.deleteFolder(folderId);
+      await this.foldersService.deleteFolder(folder.id);
       return successResponse(
         res,
         {},

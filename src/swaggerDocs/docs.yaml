@@ -373,8 +373,8 @@ paths:
     get:
       tags:
         - Forms
-      summary: Get all my forms
-      operationId: getAllMyForms
+      summary: Get all forms
+      operationId: getAllForms
       security:
         - bearerAuth:
             - write:forms
@@ -430,6 +430,16 @@ paths:
             enum:
               - asc
               - desc
+        - name: folderId
+          in: query
+          schema:
+            type: number
+            example: 12
+        - name: teamId
+          in: query
+          schema:
+            type: number
+            example: 15
       responses:
         '200':
           description: Success
@@ -508,9 +518,6 @@ paths:
                   type: array
                   items:
                     $ref: '#/components/schemas/Element'
-                teamId:
-                  type: number
-                  example: 20
         required: true
       responses:
         '201':
@@ -1295,6 +1302,17 @@ components:
               username:
                 type: string
                 example: john
+        folders:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 2
+              name:
+                type: string
+                example: Folder A
   securitySchemes:
     bearerAuth:
       in: header

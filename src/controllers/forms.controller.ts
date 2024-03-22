@@ -1,5 +1,5 @@
-import { Form, Prisma } from '@prisma/client';
-import { Request, Response } from 'express';
+import { Folder, Form, Prisma, Team } from '@prisma/client';
+import { Response } from 'express';
 import status from 'http-status';
 
 import {
@@ -16,6 +16,7 @@ import {
 } from '../constants';
 import {
   CreateFormSchemaType,
+  GetFormsQueryParamsSchemaType,
   UpdateFormSchemaType,
 } from '../schemas/forms.schemas';
 import { FormsService, getFormsService } from '../services/forms.service';
@@ -51,19 +52,27 @@ export class FormsController {
     this.teamsService = getTeamsService();
   }
 
-  public getAllMyForms = async (req: Request, res: Response) => {
+  public getAllForms = async (
+    req: CustomRequest<unknown, GetFormsQueryParamsSchemaType>,
+    res: Response,
+  ) => {
     try {
       const userId = req.session.userId;
 
-      const page = Number(req.query.page) || DEFAULT_PAGE;
-      const pageSize = Number(req.query.pageSize) || DEFAULT_PAGE_SIZE;
-      const searchText = req.query.search?.toString() || '';
-      const isDeleted = Number(req.query.isDeleted) === 1 ? true : false;
-      const isFavourite = Number(req.query.isFavourite) === 1 ? true : false;
-      const sortField =
-        req.query.sortField?.toString() || SORT_FORM_FIELDS.CREATED_AT;
-      const sortDirection =
-        req.query.sortDirection?.toString() || SORT_FORM_DIRECTIONS.DESC;
+      const {
+        page = DEFAULT_PAGE,
+        pageSize = DEFAULT_PAGE_SIZE,
+        search: searchText = '',
+        isDeleted: isDeletedParam,
+        isFavourite: isFavouriteParam,
+        sortField = SORT_FORM_FIELDS.CREATED_AT,
+        sortDirection = SORT_FORM_DIRECTIONS.DESC,
+        folderId,
+        teamId,
+      } = req.query;
+
+      const isDeleted = isDeletedParam === 1;
+      const isFavourite = isFavouriteParam === 1;
 
       if (!ALLOWED_SORT_FORM_FIELDS.includes(sortField)) {
         return errorResponse(res, ERROR_MESSAGES.INVALID_SORT_FIELD);
@@ -76,6 +85,8 @@ export class FormsController {
       const totalForms = await this.formsService.getTotalFormsByUserId(userId, {
         isDeleted,
         isFavourite,
+        folderId,
+        teamId,
       });
       const totalPages = Math.ceil(totalForms / pageSize);
 
@@ -90,6 +101,8 @@ export class FormsController {
         isFavourite,
         sortField,
         sortDirection,
+        folderId,
+        teamId,
       });
 
       const formsWithFavouriteStatus = await Promise.all(
@@ -130,7 +143,7 @@ export class FormsController {
     try {
       const userId = req.session.userId;
 
-      const form = req.body.form;
+      const { form } = req.body;
 
       if (!canView(userId, form.permissions as Prisma.JsonObject)) {
         return errorResponse(
@@ -155,28 +168,8 @@ export class FormsController {
     res: Response,
   ) => {
     try {
-      const { title, logoUrl, settings, elements, teamId } = req.body;
+      const { title, logoUrl, settings, elements } = req.body;
       const userId = req.session.userId;
-
-      if (teamId) {
-        const memberExistsInTeam =
-          await this.teamsService.checkMemberExistsInTeam(teamId, userId);
-        if (!memberExistsInTeam) {
-          return errorResponse(res, TEAM_ERROR_MESSAGES.USER_NOT_IN_TEAM);
-        }
-
-        const newForm = await this.formsService.createFormInTeam(
-          userId,
-          teamId,
-          { title, logoUrl, settings, elements },
-        );
-        return successResponse(
-          res,
-          newForm,
-          FORM_SUCCESS_MESSAGES.CREATE_FORM_SUCCESS,
-          status.CREATED,
-        );
-      }
 
       const newForm = await this.formsService.createForm(userId, {
         title,
@@ -199,16 +192,45 @@ export class FormsController {
     }
   };
 
-  public updateForm = async (
-    req: CustomRequest<UpdateFormSchemaType & { form: Form }>,
+  public createFormInTeam = async (
+    req: CustomRequest<CreateFormSchemaType & { team: Team }>,
     res: Response,
   ) => {
     try {
-      const { id } = req.params;
-      const formId = Number(id);
+      const { title, logoUrl, settings, elements, team } = req.body;
       const userId = req.session.userId;
 
-      if (!canEdit(userId, req.body.form.permissions as Prisma.JsonObject)) {
+      const newForm = await this.formsService.createFormInTeam(userId, {
+        title,
+        logoUrl,
+        settings,
+        elements,
+        teamId: team.id,
+      });
+      return successResponse(
+        res,
+        newForm,
+        FORM_SUCCESS_MESSAGES.CREATE_FORM_SUCCESS,
+        status.CREATED,
+      );
+    } catch (error) {
+      return errorResponse(
+        res,
+        ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
+        status.INTERNAL_SERVER_ERROR,
+      );
+    }
+  };
+
+  public createFormInMyFolder = async (
+    req: CustomRequest<CreateFormSchemaType & { folder: Folder }>,
+    res: Response,
+  ) => {
+    try {
+      const { title, logoUrl, settings, elements, folder } = req.body;
+      const userId = req.session.userId;
+
+      if (!canEdit(userId, folder.permissions as Prisma.JsonObject)) {
         return errorResponse(
           res,
           ERROR_MESSAGES.ACCESS_DENIED,
@@ -216,10 +238,90 @@ export class FormsController {
         );
       }
 
-      const { title, logoUrl, settings, elements } =
-        req.body as UpdateFormSchemaType;
+      const newForm = await this.formsService.createFormInMyFolder(userId, {
+        title,
+        logoUrl,
+        settings,
+        elements,
+        folderId: folder.id,
+      });
+      return successResponse(
+        res,
+        newForm,
+        FORM_SUCCESS_MESSAGES.CREATE_FORM_SUCCESS,
+        status.CREATED,
+      );
+    } catch (error) {
+      return errorResponse(
+        res,
+        ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
+        status.INTERNAL_SERVER_ERROR,
+      );
+    }
+  };
 
-      const updatedForm = await this.formsService.updateForm(formId, {
+  public createFormInFolderOfTeam = async (
+    req: CustomRequest<CreateFormSchemaType & { folder: Folder; team: Team }>,
+    res: Response,
+  ) => {
+    try {
+      const { title, logoUrl, settings, elements, folder, team } = req.body;
+      const userId = req.session.userId;
+
+      const folderExistsInTeam =
+        await this.teamsService.checkFolderExistsInTeam(team.id, folder.id);
+      if (!folderExistsInTeam) {
+        return errorResponse(res, TEAM_ERROR_MESSAGES.FOLDER_NOT_IN_TEAM);
+      }
+
+      if (!canEdit(userId, folder.permissions as Prisma.JsonObject)) {
+        return errorResponse(
+          res,
+          ERROR_MESSAGES.ACCESS_DENIED,
+          status.FORBIDDEN,
+        );
+      }
+
+      const newForm = await this.formsService.createFormInFolderOfTeam(userId, {
+        title,
+        logoUrl,
+        settings,
+        elements,
+        folderId: folder.id,
+        teamId: team.id,
+      });
+      return successResponse(
+        res,
+        newForm,
+        FORM_SUCCESS_MESSAGES.CREATE_FORM_SUCCESS,
+        status.CREATED,
+      );
+    } catch (error) {
+      return errorResponse(
+        res,
+        ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
+        status.INTERNAL_SERVER_ERROR,
+      );
+    }
+  };
+
+  public updateForm = async (
+    req: CustomRequest<UpdateFormSchemaType & { form: Form }>,
+    res: Response,
+  ) => {
+    try {
+      const userId = req.session.userId;
+      const { title, logoUrl, settings, elements, form } = req.body;
+
+      if (!canEdit(userId, form.permissions as Prisma.JsonObject)) {
+        return errorResponse(
+          res,
+          ERROR_MESSAGES.ACCESS_DENIED,
+          status.FORBIDDEN,
+        );
+      }
+
+      const updatedForm = await this.formsService.updateForm(form.id, {
         title,
         logoUrl,
         settings,
@@ -244,11 +346,8 @@ export class FormsController {
     res: Response,
   ) => {
     try {
-      const { id } = req.params;
-      const formId = Number(id);
       const userId = req.session.userId;
-
-      const form = req.body.form;
+      const { form } = req.body;
 
       if (!canDelete(userId, form.permissions as Prisma.JsonObject)) {
         return errorResponse(
@@ -259,14 +358,14 @@ export class FormsController {
       }
 
       if (form.deletedAt === null) {
-        const deletedForm = await this.formsService.softDeleteForm(formId);
+        const deletedForm = await this.formsService.softDeleteForm(form.id);
         return successResponse(
           res,
           deletedForm,
           FORM_SUCCESS_MESSAGES.SOFT_DELETE_SUCCESS,
         );
       } else {
-        await this.formsService.hardDeleteForm(formId);
+        await this.formsService.hardDeleteForm(form.id);
         return successResponse(
           res,
           {},
@@ -282,20 +381,43 @@ export class FormsController {
     }
   };
 
-  public addToFavourites = async (req: Request, res: Response) => {
+  public restoreForm = async (
+    req: CustomRequest<{ form: Form }>,
+    res: Response,
+  ) => {
     try {
-      const { id } = req.params;
-      const formId = Number(id);
+      const { form } = req.body;
+
+      const restoredForm = await this.formsService.restoreForm(form.id);
+
+      return successResponse(
+        res,
+        restoredForm,
+        FORM_SUCCESS_MESSAGES.RESTORE_FORM_SUCCESS,
+      );
+    } catch (error) {
+      return errorResponse(
+        res,
+        ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
+        status.INTERNAL_SERVER_ERROR,
+      );
+    }
+  };
+
+  public addToFavourites = async (
+    req: CustomRequest<{ form: Form }>,
+    res: Response,
+  ) => {
+    try {
       const userId = req.session.userId;
+      const { form } = req.body;
 
       const favouriteFormsOfUser =
         await this.usersService.getFavouriteFormsOfUser(userId);
 
-      if (
-        favouriteFormsOfUser?.findIndex((form) => form.id === formId) !== -1
-      ) {
+      if (favouriteFormsOfUser?.findIndex(({ id }) => id === form.id) !== -1) {
         const responseData = await this.formsService.removeFromFavourites(
-          formId,
+          form.id,
           userId,
         );
         return successResponse(
@@ -305,7 +427,7 @@ export class FormsController {
         );
       } else {
         const responseData = await this.formsService.addToFavourites(
-          formId,
+          form.id,
           userId,
         );
         return successResponse(

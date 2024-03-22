@@ -76,7 +76,7 @@ const fieldsSchema = z
   .strict()
   .array();
 
-const positionSchema = z
+const gridSizeSchema = z
   .object(
     {
       x: z.number({
@@ -106,15 +106,15 @@ const positionSchema = z
 const elementsSchema = z
   .object(
     {
-      id: z.number({
+      id: z.string({
         required_error: ERROR_MESSAGES.REQUIRED_FIELD,
-        invalid_type_error: ERROR_MESSAGES.REQUIRED_NUMBER_TYPE,
+        invalid_type_error: ERROR_MESSAGES.REQUIRED_STRING_TYPE,
       }),
       type: z
         .string({ required_error: ERROR_MESSAGES.REQUIRED_FIELD })
         .min(1, ERROR_MESSAGES.NO_EMPTY_FIELD),
       fields: fieldsSchema,
-      position: positionSchema,
+      gridSize: gridSizeSchema,
       config: z.object(
         {},
         {
@@ -146,11 +146,6 @@ export const CreateFormSchema = z.object({
     .optional(),
   settings: settingsSchema.partial(),
   elements: elementsSchema,
-  teamId: z
-    .number({
-      invalid_type_error: ERROR_MESSAGES.REQUIRED_NUMBER_TYPE,
-    })
-    .optional(),
 });
 
 export const UpdateFormSchema = z
@@ -198,11 +193,15 @@ export const fullnameConfigSchema = z
       invalid_type_error: ERROR_MESSAGES.REQUIRED_BOOLEAN_TYPE,
     }),
     sublabels: z
-      .string({
-        required_error: FORM_ERROR_MESSAGES.REQUIRED_FIELD_IN_FULLNAME_CONFIG,
+      .object({
+        firstName: z.string({
+          required_error: FORM_ERROR_MESSAGES.REQUIRED_FIELD_IN_FULLNAME_CONFIG,
+        }),
+        lastName: z.string({
+          required_error: FORM_ERROR_MESSAGES.REQUIRED_FIELD_IN_FULLNAME_CONFIG,
+        }),
       })
-      .array()
-      .nonempty({ message: ERROR_MESSAGES.NO_EMPTY_FIELD }),
+      .strict(),
   })
   .strict();
 
@@ -237,11 +236,21 @@ export const addressConfigSchema = z
       invalid_type_error: ERROR_MESSAGES.REQUIRED_BOOLEAN_TYPE,
     }),
     sublabels: z
-      .string({
-        required_error: FORM_ERROR_MESSAGES.REQUIRED_FIELD_IN_ADDRESS_CONFIG,
+      .object({
+        street: z.string({
+          required_error: FORM_ERROR_MESSAGES.REQUIRED_FIELD_IN_ADDRESS_CONFIG,
+        }),
+        ward: z.string({
+          required_error: FORM_ERROR_MESSAGES.REQUIRED_FIELD_IN_ADDRESS_CONFIG,
+        }),
+        district: z.string({
+          required_error: FORM_ERROR_MESSAGES.REQUIRED_FIELD_IN_ADDRESS_CONFIG,
+        }),
+        city: z.string({
+          required_error: FORM_ERROR_MESSAGES.REQUIRED_FIELD_IN_ADDRESS_CONFIG,
+        }),
       })
-      .array()
-      .nonempty({ message: ERROR_MESSAGES.NO_EMPTY_FIELD }),
+      .strict(),
   })
   .strict();
 
@@ -542,11 +551,15 @@ export const timeConfigSchema = z
       invalid_type_error: ERROR_MESSAGES.REQUIRED_BOOLEAN_TYPE,
     }),
     sublabels: z
-      .string({
-        required_error: FORM_ERROR_MESSAGES.REQUIRED_FIELD_IN_TIME_CONFIG,
+      .object({
+        hour: z.string({
+          required_error: FORM_ERROR_MESSAGES.REQUIRED_FIELD_IN_TIME_CONFIG,
+        }),
+        minutes: z.string({
+          required_error: FORM_ERROR_MESSAGES.REQUIRED_FIELD_IN_TIME_CONFIG,
+        }),
       })
-      .array()
-      .nonempty({ message: ERROR_MESSAGES.NO_EMPTY_FIELD }),
+      .strict(),
   })
   .strict();
 
@@ -702,6 +715,55 @@ export const pageBreakConfigSchema = z
   })
   .strict();
 
+export const GetFormsQueryParamsSchema = z
+  .object({
+    page: z
+      .number({
+        invalid_type_error: ERROR_MESSAGES.REQUIRED_NUMBER_TYPE,
+      })
+      .positive(ERROR_MESSAGES.NUMBER_MUST_BE_POSITIVE),
+    pageSize: z
+      .number({
+        invalid_type_error: ERROR_MESSAGES.REQUIRED_NUMBER_TYPE,
+      })
+      .positive(ERROR_MESSAGES.NUMBER_MUST_BE_POSITIVE),
+    search: z.string({
+      invalid_type_error: ERROR_MESSAGES.REQUIRED_STRING_TYPE,
+    }),
+    isDeleted: z
+      .number({
+        invalid_type_error: ERROR_MESSAGES.REQUIRED_NUMBER_TYPE,
+      })
+      .nonnegative(ERROR_MESSAGES.NUMBER_MUST_BE_NONNEGATIVE),
+    isFavourite: z
+      .number({
+        invalid_type_error: ERROR_MESSAGES.REQUIRED_NUMBER_TYPE,
+      })
+      .nonnegative(ERROR_MESSAGES.NUMBER_MUST_BE_NONNEGATIVE),
+    sortField: z.string({
+      invalid_type_error: ERROR_MESSAGES.REQUIRED_STRING_TYPE,
+    }),
+    sortDirection: z.string({
+      invalid_type_error: ERROR_MESSAGES.REQUIRED_STRING_TYPE,
+    }),
+    folderId: z
+      .number({
+        invalid_type_error: ERROR_MESSAGES.REQUIRED_NUMBER_TYPE,
+      })
+      .positive(ERROR_MESSAGES.NUMBER_MUST_BE_POSITIVE),
+    teamId: z
+      .number({
+        invalid_type_error: ERROR_MESSAGES.REQUIRED_NUMBER_TYPE,
+      })
+      .positive(ERROR_MESSAGES.NUMBER_MUST_BE_POSITIVE),
+  })
+  .strict()
+  .partial();
+
 export type CreateFormSchemaType = z.infer<typeof CreateFormSchema>;
 
 export type UpdateFormSchemaType = z.infer<typeof UpdateFormSchema>;
+
+export type GetFormsQueryParamsSchemaType = z.infer<
+  typeof GetFormsQueryParamsSchema
+>;

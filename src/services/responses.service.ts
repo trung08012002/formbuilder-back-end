@@ -12,8 +12,11 @@ export const getResponsesService = () => {
 };
 
 export class ResponsesService {
-  public async createResponse(formId: number, response: CreatedResponseSchema) {
-    return prisma.$transaction(async (tx) => {
+  public createResponse = async (
+    formId: number,
+    response: CreatedResponseSchema,
+  ) =>
+    prisma.$transaction(async (tx) => {
       const form = await tx.form.findFirstOrThrow({
         where: { id: formId },
         select: { totalSubmissions: true },
@@ -26,10 +29,9 @@ export class ResponsesService {
         data: { formId, formAnswers: [...response.formAnswers] },
       });
     });
-  }
 
-  public async deleteResponse(formId: number, id: number) {
-    return prisma.$transaction(async (tx) => {
+  public deleteResponse = async (formId: number, responseId: number) =>
+    prisma.$transaction(async (tx) => {
       const form = await tx.form.findFirstOrThrow({
         where: { id: formId },
         select: { totalSubmissions: true },
@@ -40,17 +42,19 @@ export class ResponsesService {
       });
       return tx.response.delete({
         where: {
-          id: id,
+          id: responseId,
         },
       });
     });
-  }
 
-  public async getFormByFormId(formId: number) {
-    return prisma.form.findFirst({ where: { id: formId } });
-  }
+  public getResponseById = (responseId: number) =>
+    prisma.response.findUnique({
+      where: {
+        id: responseId,
+      },
+    });
 
-  public async getResponsesByFormId(props: GetResponsesByFormIdParams) {
+  public getResponsesByFormId = async (props: GetResponsesByFormIdParams) => {
     const { formId, offset, limit, filterList, sortField, sortDirection } =
       props;
     return prisma.response.findMany({
@@ -66,5 +70,5 @@ export class ResponsesService {
         createdAt: true,
       },
     });
-  }
+  };
 }

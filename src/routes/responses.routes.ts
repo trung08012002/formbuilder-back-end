@@ -7,6 +7,8 @@ import {
 } from '@/controllers/responses.controller';
 import {
   checkFormExistence,
+  checkResponseExistence,
+  checkUserExistence,
   validateCreatedResponse,
   validateFilterObject,
   verifyToken,
@@ -19,6 +21,7 @@ const responsesController: ResponsesController = getResponsesController();
 responseRoute.get(
   ROUTES.RESPONSE.GET_RESPONSES_BY_FORMID,
   verifyToken,
+  checkUserExistence,
   validateFilterObject,
   checkFormExistence,
   responsesController.getAllResponseByFormId,
@@ -27,6 +30,7 @@ responseRoute.get(
 responseRoute.post(
   ROUTES.RESPONSE.CREATE_RESPONSE,
   verifyToken,
+  checkUserExistence,
   validateCreatedResponse,
   checkFormExistence,
   responsesController.createResponse,
@@ -35,6 +39,8 @@ responseRoute.post(
 responseRoute.delete(
   ROUTES.RESPONSE.DELETE_RESPONSE,
   verifyToken,
+  checkUserExistence,
+  checkResponseExistence,
   checkFormExistence,
   responsesController.deleteResponse,
 );

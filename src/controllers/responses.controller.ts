@@ -1,22 +1,22 @@
-import { Form } from '@prisma/client';
-import { Request, Response } from 'express';
-import { ParamsDictionary } from 'express-serve-static-core';
+import { Form, Response } from '@prisma/client';
+import { Response as ExpressResponse } from 'express';
 import status from 'http-status';
 
 import {
   ERROR_MESSAGES,
   RESPONSES_ERROR_MESSAGES,
   RESPONSES_SUCCESS_MESSAGES,
+  SORT_DIRECTIONS,
 } from '@/constants';
-import { SORT_DIRECTIONS } from '@/constants';
 import { CreatedResponseSchema } from '@/schemas/createResponse.schemas';
 import { filterObjectSchema } from '@/schemas/filterObject.schemas';
 import {
   getResponsesService,
   ResponsesService,
 } from '@/services/responses.service';
+import { CustomRequest } from '@/types/customRequest.types';
 import {
-  calculatePagination as calculatePagination,
+  calculatePagination,
   errorResponse,
   isDateActions,
   isOtherFieldsActions,
@@ -71,8 +71,8 @@ export class ResponsesController {
   }
 
   public getAllResponseByFormId = async (
-    req: Request<ParamsDictionary, unknown, { form: Form }>,
-    res: Response,
+    req: CustomRequest<{ form: Form }>,
+    res: ExpressResponse,
   ) => {
     try {
       const reqDate = filterObjectSchema.parse(req.query);
@@ -126,13 +126,13 @@ export class ResponsesController {
   };
 
   public createResponse = async (
-    req: Request<ParamsDictionary, unknown, CreatedResponseSchema>,
-    res: Response,
+    req: CustomRequest<CreatedResponseSchema & { form: Form }>,
+    res: ExpressResponse,
   ) => {
     try {
-      const formId = Number(req.params.formId);
+      const { form } = req.body;
       const createdResponse = await this.responsesService.createResponse(
-        formId,
+        form.id,
         req.body,
       );
       return successResponse(
@@ -149,20 +149,18 @@ export class ResponsesController {
     }
   };
 
-  deleteResponse = async (req: Request, res: Response) => {
+  public deleteResponse = async (
+    req: CustomRequest<
+      CreatedResponseSchema & { response: Response; form: Form }
+    >,
+    res: ExpressResponse,
+  ) => {
     try {
-      const { formId, id } = req.params;
-      if (!id || !formId) {
-        return errorResponse(
-          res,
-          RESPONSES_ERROR_MESSAGES.ID_PARAMS_NOT_FOUND,
-          status.UNPROCESSABLE_ENTITY,
-        );
-      }
+      const { form, response } = req.body;
 
       const deletedResponse = await this.responsesService.deleteResponse(
-        parseInt(formId),
-        parseInt(id),
+        form.id,
+        response.id,
       );
       return successResponse(
         res,
@@ -170,7 +168,6 @@ export class ResponsesController {
         RESPONSES_SUCCESS_MESSAGES.RESPONSE_DELETED,
       );
     } catch (error) {
-      console.error('Error in response:', error);
       return errorResponse(
         res,
         ERROR_MESSAGES.INTERNAL_SERVER_ERROR,

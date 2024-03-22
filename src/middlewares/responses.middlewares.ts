@@ -1,35 +1,35 @@
 import { NextFunction, Request, Response } from 'express';
 import status from 'http-status';
 
-import { ERROR_MESSAGES, FORM_ERROR_MESSAGES } from '@/constants';
-import { FormsService, getFormsService } from '@/services/forms.service';
-import { errorResponse } from '@/utils';
+import { ERROR_MESSAGES, RESPONSES_ERROR_MESSAGES } from '../constants';
+import {
+  getResponsesService,
+  ResponsesService,
+} from '../services/responses.service';
+import { errorResponse } from '../utils';
 
-const formsService: FormsService = getFormsService();
+const responsesService: ResponsesService = getResponsesService();
 
-export const checkFormExistence = async (
+export const checkResponseExistence = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    const formId = Number(req.params.formId);
-    if (!formId) {
+    const { responseId } = req.params;
+
+    const existingResponse = await responsesService.getResponseById(
+      Number(responseId),
+    );
+    if (!existingResponse) {
       return errorResponse(
         res,
-        ERROR_MESSAGES.ID_NOT_FOUND,
-        status.UNPROCESSABLE_ENTITY,
-      );
-    }
-    const exitedForm = await formsService.getFormById(formId);
-    if (!exitedForm) {
-      return errorResponse(
-        res,
-        FORM_ERROR_MESSAGES.FORM_NOT_FOUND,
+        RESPONSES_ERROR_MESSAGES.RESPONSE_NOT_FOUND,
         status.NOT_FOUND,
       );
     }
-    req.body.form = exitedForm;
+
+    req.body.response = existingResponse;
     next();
   } catch (error) {
     return errorResponse(res, ERROR_MESSAGES.INTERNAL_SERVER_ERROR);

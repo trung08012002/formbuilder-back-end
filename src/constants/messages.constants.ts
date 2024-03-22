@@ -13,6 +13,9 @@ export const ERROR_MESSAGES = {
   REQUIRED_ARRAY_TYPE: 'This field must be an array',
   INVALID_SORT_FIELD: 'Invalid sort field',
   INVALID_SORT_DIRECTION: 'Invalid sort direction',
+  INVALID_QUERY_PARAMS: 'Invalid query params',
+  NUMBER_MUST_BE_POSITIVE: 'Value must be greater than 0',
+  NUMBER_MUST_BE_NONNEGATIVE: 'Value must be greater than or equal to 0',
 };
 
 export const SUCCESS_MESSAGES = {
@@ -56,6 +59,7 @@ export const FORM_SUCCESS_MESSAGES = {
   UPDATE_FORM_SUCCESS: 'Form updated successfully',
   SOFT_DELETE_SUCCESS: 'Form has been moved to trash successfully',
   HARD_DELETE_SUCCESS: 'Form has been permanently deleted',
+  RESTORE_FORM_SUCCESS: 'Form has been restored successfully',
   ADD_TO_FAVOURITES_SUCCESS: 'This form has been added to your favourite forms',
   REMOVE_FROM_FAVOURITES_SUCCESS:
     'This form has been removed from your favourite forms',
@@ -141,6 +145,21 @@ export const TEAM_ERROR_MESSAGES = {
   TEAM_NOT_FOUND: 'Team not found',
   USER_EXISTS_IN_TEAM: 'This user already exists in the team',
   USER_NOT_IN_TEAM: 'This user does not exist in the team',
+  FOLDER_NOT_IN_TEAM: 'This folder does not belong to the team',
   NO_MEMBERS_IN_TEAM: 'There are no members in the team',
   CAN_NOT_REMOVE_TEAM_OWNER: 'Team owner can not be removed from the team',
 };
+
+export const RESPONSES_SUCCESS_MESSAGES = {
+  RESPONSE_CREATED: 'Response created successfully',
+  RESPONSE_UPDATED: 'Response updated successfully',
+  RESPONSE_DELETED: 'Response deleted successfully',
+  RESPONSE_GET_SUCCESS: 'Response get successfully',
+} as const;
+
+export const RESPONSES_ERROR_MESSAGES = {
+  INVALID_FIELD_FILTER: 'Invalid field filter',
+  INVALID_SORT_DIRECTION: 'Invalid sort direction',
+  RESPONSE_NOT_FOUND: 'Response not found',
+  ID_PARAMS_NOT_FOUND: 'Id parameters not found',
+} as const;

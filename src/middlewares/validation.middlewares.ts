@@ -16,7 +16,7 @@ export const validate =
       let returnMessage: string = '';
       if (err instanceof z.ZodError) {
         err.issues.forEach((e) => {
-          const field = e.path[0];
+          const field = e.path[e.path.length - 1];
           const message = e.message;
 
           if (errorMessages[field]) {
@@ -28,8 +28,7 @@ export const validate =
 
         returnMessage = Object.entries(errorMessages)
           .map(
-            ([field, messages]) =>
-              `This field ${field}: ${messages.join(', ')}`,
+            ([field, messages]) => `Field '${field}': ${messages.join(', ')}`,
           )
           .join('; ');
       }

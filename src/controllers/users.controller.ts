@@ -92,7 +92,7 @@ export class UsersController {
 
   public delUserByID = async (req: Request, res: Response) => {
     try {
-      const { id: userId } = req.params;
+      const { userId } = req.params;
 
       const foundUser = await this.usersService.getUserByID(Number(userId));
 

@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 import status from 'http-status';
 
+import { CustomRequest } from '@/types/customRequest.types';
+
 import { ERROR_MESSAGES, FORM_ERROR_MESSAGES } from '../constants';
 import {
   addressConfigSchema,
@@ -11,6 +13,8 @@ import {
   emailConfigSchema,
   fileUploadConfigSchema,
   fullnameConfigSchema,
+  GetFormsQueryParamsSchema,
+  GetFormsQueryParamsSchemaType,
   headingConfigSchema,
   imageConfigSchema,
   inputTableConfigSchema,
@@ -286,10 +290,9 @@ export const checkFormExistence = async (
   next: NextFunction,
 ) => {
   try {
-    const { id } = req.params;
-    const formId = Number(id);
+    const { formId } = req.params;
 
-    const existingForm = await formsService.getFormById(formId);
+    const existingForm = await formsService.getFormById(Number(formId));
     if (!existingForm) {
       return errorResponse(
         res,
@@ -298,6 +301,48 @@ export const checkFormExistence = async (
       );
     }
     req.body.form = existingForm;
+    next();
+  } catch (error) {
+    return errorResponse(res, ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
+  }
+};
+
+export const validateGetFormQueryParamsSchema = async (
+  req: CustomRequest<unknown, GetFormsQueryParamsSchemaType>,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const {
+      search,
+      sortField,
+      sortDirection,
+      page: pageParam,
+      pageSize: pageSizeParam,
+      isDeleted: isDeletedParam,
+      isFavourite: isFavouriteParam,
+      folderId: folderIdParam,
+      teamId: teamIdParam,
+    } = req.query;
+
+    const queryParams: GetFormsQueryParamsSchemaType = {
+      search,
+      sortField,
+      sortDirection,
+      page: pageParam ? Number(pageParam) : undefined,
+      pageSize: pageSizeParam ? Number(pageSizeParam) : undefined,
+      isDeleted: isDeletedParam ? Number(isDeletedParam) : undefined,
+      isFavourite: isFavouriteParam ? Number(isFavouriteParam) : undefined,
+      folderId: folderIdParam ? Number(folderIdParam) : undefined,
+      teamId: teamIdParam ? Number(teamIdParam) : undefined,
+    };
+
+    const result = await validateData(GetFormsQueryParamsSchema, queryParams);
+    if (result?.error) {
+      return errorResponse(res, ERROR_MESSAGES.INVALID_QUERY_PARAMS);
+    }
+
+    req.query = queryParams;
     next();
   } catch (error) {
     return errorResponse(res, ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
