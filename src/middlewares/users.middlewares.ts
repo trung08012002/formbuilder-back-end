@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import status from 'http-status';
 
-import { ERROR_MESSAGES, USER_ERROR_MESSAGES } from '../constants';
+import { USER_ERROR_MESSAGES } from '../constants';
 import { getUsersService, UsersService } from '../services/users.service';
 import { errorResponse } from '../utils';
 
@@ -13,7 +13,7 @@ export const checkUserExistence = async (
   next: NextFunction,
 ) => {
   try {
-    const userId = req.session.userId;
+    const { userId } = req.session;
 
     const existingUser = await usersService.getUserByID(userId);
 
@@ -29,6 +29,6 @@ export const checkUserExistence = async (
 
     next();
   } catch (error) {
-    return errorResponse(res, ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
+    return errorResponse(res);
   }
 };

@@ -3,7 +3,6 @@ import { Response as ExpressResponse } from 'express';
 import status from 'http-status';
 
 import {
-  ERROR_MESSAGES,
   RESPONSES_ERROR_MESSAGES,
   RESPONSES_SUCCESS_MESSAGES,
   SORT_DIRECTIONS,
@@ -81,7 +80,7 @@ export class ResponsesController {
       const searchText = reqDate.searchText;
       const fieldsFilter = reqDate.fieldsFilter;
       const filterList = fieldsFilter?.split(',') || [];
-      const form = req.body.form;
+      const { form } = req.body;
       const totalResponses = form.totalSubmissions;
       const idElementsOfFormList = form.elements.map(
         (element) => +JSON.parse(JSON.stringify(element)).id,
@@ -117,11 +116,7 @@ export class ResponsesController {
       if (error instanceof Error) {
         return errorResponse(res, error.message, status.UNPROCESSABLE_ENTITY);
       }
-      return errorResponse(
-        res,
-        ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
-        status.INTERNAL_SERVER_ERROR,
-      );
+      return errorResponse(res);
     }
   };
 
@@ -130,22 +125,19 @@ export class ResponsesController {
     res: ExpressResponse,
   ) => {
     try {
-      const { form } = req.body;
+      const { form, formAnswers } = req.body;
       const createdResponse = await this.responsesService.createResponse(
         form.id,
-        req.body,
+        { formAnswers },
       );
       return successResponse(
         res,
         createdResponse,
         RESPONSES_SUCCESS_MESSAGES.RESPONSE_CREATED,
+        status.CREATED,
       );
     } catch (error) {
-      return errorResponse(
-        res,
-        ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
-        status.INTERNAL_SERVER_ERROR,
-      );
+      return errorResponse(res);
     }
   };
 
@@ -168,11 +160,7 @@ export class ResponsesController {
         RESPONSES_SUCCESS_MESSAGES.RESPONSE_DELETED,
       );
     } catch (error) {
-      return errorResponse(
-        res,
-        ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
-        status.INTERNAL_SERVER_ERROR,
-      );
+      return errorResponse(res);
     }
   };
 }

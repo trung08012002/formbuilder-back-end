@@ -267,7 +267,8 @@ export const validateConfigSchema = async (
           default:
             return errorResponse(
               res,
-              FORM_ERROR_MESSAGES.UNDEFINED_TYPE_OF_ELEMENT,
+              FORM_ERROR_MESSAGES.INVALID_TYPE_OF_ELEMENT,
+              status.BAD_REQUEST,
             );
         }
       }
@@ -275,12 +276,13 @@ export const validateConfigSchema = async (
         return errorResponse(
           res,
           `Property 'config' in element with ID: ${errorElementId} is invalid`,
+          status.BAD_REQUEST,
         );
       }
     }
     next();
   } catch (error) {
-    return errorResponse(res, ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
+    return errorResponse(res);
   }
 };
 
@@ -303,7 +305,7 @@ export const checkFormExistence = async (
     req.body.form = existingForm;
     next();
   } catch (error) {
-    return errorResponse(res, ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
+    return errorResponse(res);
   }
 };
 
@@ -339,12 +341,16 @@ export const validateGetFormQueryParamsSchema = async (
 
     const result = await validateData(GetFormsQueryParamsSchema, queryParams);
     if (result?.error) {
-      return errorResponse(res, ERROR_MESSAGES.INVALID_QUERY_PARAMS);
+      return errorResponse(
+        res,
+        ERROR_MESSAGES.INVALID_QUERY_PARAMS,
+        status.BAD_REQUEST,
+      );
     }
 
     req.query = queryParams;
     next();
   } catch (error) {
-    return errorResponse(res, ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
+    return errorResponse(res);
   }
 };

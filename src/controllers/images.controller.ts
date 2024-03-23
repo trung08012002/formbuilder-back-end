@@ -9,7 +9,7 @@ class ImageController {
   public uploadImage = async (req: Request, res: Response) => {
     try {
       if (req.file) {
-        const filePath = req.file.path;
+        const { path: filePath } = req.file;
         const uploadResult = await cloudinary.uploader.upload(filePath);
 
         return successResponse(
@@ -18,15 +18,15 @@ class ImageController {
           IMAGE_SUCCESS_MESSAGES.UPLOAD_FILE_SUCCESS,
         );
       } else {
-        return errorResponse(res, IMAGE_ERROR_MESSAGES.NO_FILE_UPLOADED);
+        return errorResponse(
+          res,
+          IMAGE_ERROR_MESSAGES.NO_FILE_UPLOADED,
+          status.BAD_REQUEST,
+        );
       }
     } catch (error) {
       console.error('Error uploading image:', error);
-      return errorResponse(
-        res,
-        IMAGE_ERROR_MESSAGES.ERROR_UPLOADING_IMAGE,
-        status.INTERNAL_SERVER_ERROR,
-      );
+      return errorResponse(res);
     }
   };
 }

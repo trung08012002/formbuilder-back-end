@@ -2,11 +2,7 @@ import { Folder, Prisma, Team } from '@prisma/client';
 import { Request, Response } from 'express';
 import status from 'http-status';
 
-import {
-  ERROR_MESSAGES,
-  FOLDER_SUCCESS_MESSAGES,
-  SUCCESS_MESSAGES,
-} from '../constants';
+import { ERROR_MESSAGES, FOLDER_SUCCESS_MESSAGES } from '../constants';
 import {
   CreateFolderSchemaType,
   UpdateFolderSchemaType,
@@ -46,7 +42,7 @@ export class FoldersController {
   ) => {
     try {
       const { name } = req.body;
-      const userId = req.session.userId;
+      const { userId } = req.session;
 
       const newFolder = await this.foldersService.createFolder(userId, name);
       return successResponse(
@@ -56,11 +52,7 @@ export class FoldersController {
         status.CREATED,
       );
     } catch (error) {
-      return errorResponse(
-        res,
-        ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
-        status.INTERNAL_SERVER_ERROR,
-      );
+      return errorResponse(res);
     }
   };
 
@@ -70,7 +62,7 @@ export class FoldersController {
   ) => {
     try {
       const { name, team } = req.body;
-      const userId = req.session.userId;
+      const { userId } = req.session;
 
       const newFolder = await this.foldersService.createFolderInTeam(userId, {
         name,
@@ -83,27 +75,19 @@ export class FoldersController {
         status.CREATED,
       );
     } catch (error) {
-      return errorResponse(
-        res,
-        ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
-        status.INTERNAL_SERVER_ERROR,
-      );
+      return errorResponse(res);
     }
   };
 
   public getAllFoldersOfUser = async (req: Request, res: Response) => {
     try {
-      const userId = req.session.userId;
+      const { userId } = req.session;
 
       const folders = await this.foldersService.getAllFoldersOfUser(userId);
 
-      return successResponse(res, folders, SUCCESS_MESSAGES.DEFAULT);
+      return successResponse(res, folders);
     } catch (error) {
-      return errorResponse(
-        res,
-        ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
-        status.INTERNAL_SERVER_ERROR,
-      );
+      return errorResponse(res);
     }
   };
 
@@ -112,9 +96,9 @@ export class FoldersController {
     res: Response,
   ) => {
     try {
-      const userId = req.session.userId;
+      const { userId } = req.session;
 
-      const folder = req.body.folder;
+      const { folder } = req.body;
 
       if (!canView(userId, folder.permissions as Prisma.JsonObject)) {
         return errorResponse(
@@ -124,13 +108,9 @@ export class FoldersController {
         );
       }
 
-      return successResponse(res, folder, SUCCESS_MESSAGES.DEFAULT);
+      return successResponse(res, folder);
     } catch (error) {
-      return errorResponse(
-        res,
-        ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
-        status.INTERNAL_SERVER_ERROR,
-      );
+      return errorResponse(res);
     }
   };
 
@@ -139,9 +119,9 @@ export class FoldersController {
     res: Response,
   ) => {
     try {
-      const userId = req.session.userId;
+      const { userId } = req.session;
 
-      const folder = req.body.folder;
+      const { folder } = req.body;
 
       if (!canEdit(userId, folder.permissions as Prisma.JsonObject)) {
         return errorResponse(
@@ -163,11 +143,7 @@ export class FoldersController {
         FOLDER_SUCCESS_MESSAGES.UPDATE_FOLDER_SUCCESS,
       );
     } catch (error) {
-      return errorResponse(
-        res,
-        ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
-        status.INTERNAL_SERVER_ERROR,
-      );
+      return errorResponse(res);
     }
   };
 
@@ -176,9 +152,9 @@ export class FoldersController {
     res: Response,
   ) => {
     try {
-      const userId = req.session.userId;
+      const { userId } = req.session;
 
-      const folder = req.body.folder;
+      const { folder } = req.body;
 
       if (!canDelete(userId, folder.permissions as Prisma.JsonObject)) {
         return errorResponse(
@@ -195,11 +171,7 @@ export class FoldersController {
         FOLDER_SUCCESS_MESSAGES.DELETE_FOLDER_SUCCESS,
       );
     } catch (error) {
-      return errorResponse(
-        res,
-        ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
-        status.INTERNAL_SERVER_ERROR,
-      );
+      return errorResponse(res);
     }
   };
 }

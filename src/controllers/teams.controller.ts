@@ -6,7 +6,6 @@ import { CustomRequest } from '@/types/customRequest.types';
 
 import {
   ERROR_MESSAGES,
-  SUCCESS_MESSAGES,
   TEAM_ERROR_MESSAGES,
   TEAM_SUCCESS_MESSAGES,
   USER_ERROR_MESSAGES,
@@ -45,16 +44,12 @@ export class TeamsController {
 
   public getAllMyTeams = async (req: Request, res: Response) => {
     try {
-      const userId = req.session.userId;
+      const { userId } = req.session;
 
       const teams = await this.teamsService.getTeamsByUserId(userId);
-      return successResponse(res, teams, SUCCESS_MESSAGES.DEFAULT);
+      return successResponse(res, teams);
     } catch (error) {
-      return errorResponse(
-        res,
-        ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
-        status.INTERNAL_SERVER_ERROR,
-      );
+      return errorResponse(res);
     }
   };
 
@@ -63,7 +58,7 @@ export class TeamsController {
     res: Response,
   ) => {
     try {
-      const userId = req.session.userId;
+      const { userId } = req.session;
 
       const { team } = req.body;
 
@@ -75,13 +70,9 @@ export class TeamsController {
         );
       }
 
-      return successResponse(res, team, SUCCESS_MESSAGES.DEFAULT);
+      return successResponse(res, team);
     } catch (error) {
-      return errorResponse(
-        res,
-        ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
-        status.INTERNAL_SERVER_ERROR,
-      );
+      return errorResponse(res);
     }
   };
 
@@ -92,7 +83,7 @@ export class TeamsController {
     try {
       const { name, logoUrl } = req.body;
 
-      const userId = req.session.userId;
+      const { userId } = req.session;
 
       const newTeam = await this.teamsService.createTeam(name, logoUrl, userId);
       return successResponse(
@@ -102,11 +93,7 @@ export class TeamsController {
         status.CREATED,
       );
     } catch (error) {
-      return errorResponse(
-        res,
-        ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
-        status.INTERNAL_SERVER_ERROR,
-      );
+      return errorResponse(res);
     }
   };
 
@@ -115,7 +102,7 @@ export class TeamsController {
     res: Response,
   ) => {
     try {
-      const userId = req.session.userId;
+      const { userId } = req.session;
 
       const { name, logoUrl, team } = req.body;
 
@@ -138,11 +125,7 @@ export class TeamsController {
         TEAM_SUCCESS_MESSAGES.UPDATE_TEAM_SUCCESS,
       );
     } catch (error) {
-      return errorResponse(
-        res,
-        ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
-        status.INTERNAL_SERVER_ERROR,
-      );
+      return errorResponse(res);
     }
   };
 
@@ -151,7 +134,7 @@ export class TeamsController {
     res: Response,
   ) => {
     try {
-      const userId = req.session.userId;
+      const { userId } = req.session;
 
       const { team } = req.body;
 
@@ -171,11 +154,7 @@ export class TeamsController {
         TEAM_SUCCESS_MESSAGES.DELETE_TEAM_SUCCESS,
       );
     } catch (error) {
-      return errorResponse(
-        res,
-        ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
-        status.INTERNAL_SERVER_ERROR,
-      );
+      return errorResponse(res);
     }
   };
 
@@ -184,7 +163,7 @@ export class TeamsController {
     res: Response,
   ) => {
     try {
-      const userId = req.session.userId;
+      const { userId } = req.session;
 
       const { email, team } = req.body;
 
@@ -209,7 +188,11 @@ export class TeamsController {
         await this.teamsService.checkMemberExistsInTeam(team.id, foundUser.id);
 
       if (memberExistsInTeam) {
-        return errorResponse(res, TEAM_ERROR_MESSAGES.USER_EXISTS_IN_TEAM);
+        return errorResponse(
+          res,
+          TEAM_ERROR_MESSAGES.USER_EXISTS_IN_TEAM,
+          status.BAD_REQUEST,
+        );
       }
 
       await this.teamsService.addTeamMember(team.id, foundUser.id);
@@ -220,11 +203,7 @@ export class TeamsController {
         TEAM_SUCCESS_MESSAGES.ADD_TEAM_MEMBER_SUCCESS,
       );
     } catch (error) {
-      return errorResponse(
-        res,
-        ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
-        status.INTERNAL_SERVER_ERROR,
-      );
+      return errorResponse(res);
     }
   };
 
@@ -233,7 +212,7 @@ export class TeamsController {
     res: Response,
   ) => {
     try {
-      const userId = req.session.userId;
+      const { userId } = req.session;
 
       const { memberIds, team } = req.body;
 
@@ -250,12 +229,17 @@ export class TeamsController {
           return errorResponse(
             res,
             TEAM_ERROR_MESSAGES.CAN_NOT_REMOVE_TEAM_OWNER,
+            status.BAD_REQUEST,
           );
         }
 
         const existingUser = await this.usersService.getUserByID(memberId);
         if (!existingUser) {
-          return errorResponse(res, `User with ID: ${memberId} does not exist`);
+          return errorResponse(
+            res,
+            `User with ID: ${memberId} does not exist`,
+            status.BAD_REQUEST,
+          );
         }
 
         const memberExistsInTeam =
@@ -264,6 +248,7 @@ export class TeamsController {
           return errorResponse(
             res,
             `User with ID: ${memberId} is not a member in the team`,
+            status.BAD_REQUEST,
           );
         }
       }
@@ -276,11 +261,7 @@ export class TeamsController {
         TEAM_SUCCESS_MESSAGES.REMOVE_TEAM_MEMBER_SUCCESS,
       );
     } catch (error) {
-      return errorResponse(
-        res,
-        ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
-        status.INTERNAL_SERVER_ERROR,
-      );
+      return errorResponse(res);
     }
   };
 }

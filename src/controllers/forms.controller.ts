@@ -11,7 +11,6 @@ import {
   FORM_SUCCESS_MESSAGES,
   SORT_FORM_DIRECTIONS,
   SORT_FORM_FIELDS,
-  SUCCESS_MESSAGES,
   TEAM_ERROR_MESSAGES,
 } from '../constants';
 import {
@@ -57,7 +56,7 @@ export class FormsController {
     res: Response,
   ) => {
     try {
-      const userId = req.session.userId;
+      const { userId } = req.session;
 
       const {
         page = DEFAULT_PAGE,
@@ -75,11 +74,19 @@ export class FormsController {
       const isFavourite = isFavouriteParam === 1;
 
       if (!ALLOWED_SORT_FORM_FIELDS.includes(sortField)) {
-        return errorResponse(res, ERROR_MESSAGES.INVALID_SORT_FIELD);
+        return errorResponse(
+          res,
+          ERROR_MESSAGES.INVALID_SORT_FIELD,
+          status.BAD_REQUEST,
+        );
       }
 
       if (!ALLOWED_SORT_FORM_DIRECTIONS.includes(sortDirection)) {
-        return errorResponse(res, ERROR_MESSAGES.INVALID_SORT_DIRECTION);
+        return errorResponse(
+          res,
+          ERROR_MESSAGES.INVALID_SORT_DIRECTION,
+          status.BAD_REQUEST,
+        );
       }
 
       const totalForms = await this.formsService.getTotalFormsByUserId(userId, {
@@ -126,13 +133,9 @@ export class FormsController {
         totalForms,
         totalPages,
       };
-      return successResponse(res, responseData, SUCCESS_MESSAGES.DEFAULT);
+      return successResponse(res, responseData);
     } catch (error) {
-      return errorResponse(
-        res,
-        ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
-        status.INTERNAL_SERVER_ERROR,
-      );
+      return errorResponse(res);
     }
   };
 
@@ -141,7 +144,7 @@ export class FormsController {
     res: Response,
   ) => {
     try {
-      const userId = req.session.userId;
+      const { userId } = req.session;
 
       const { form } = req.body;
 
@@ -153,13 +156,9 @@ export class FormsController {
         );
       }
 
-      return successResponse(res, form, SUCCESS_MESSAGES.DEFAULT);
+      return successResponse(res, form);
     } catch (error) {
-      return errorResponse(
-        res,
-        ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
-        status.INTERNAL_SERVER_ERROR,
-      );
+      return errorResponse(res);
     }
   };
 
@@ -169,7 +168,7 @@ export class FormsController {
   ) => {
     try {
       const { title, logoUrl, settings, elements } = req.body;
-      const userId = req.session.userId;
+      const { userId } = req.session;
 
       const newForm = await this.formsService.createForm(userId, {
         title,
@@ -184,11 +183,7 @@ export class FormsController {
         status.CREATED,
       );
     } catch (error) {
-      return errorResponse(
-        res,
-        ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
-        status.INTERNAL_SERVER_ERROR,
-      );
+      return errorResponse(res);
     }
   };
 
@@ -198,7 +193,7 @@ export class FormsController {
   ) => {
     try {
       const { title, logoUrl, settings, elements, team } = req.body;
-      const userId = req.session.userId;
+      const { userId } = req.session;
 
       const newForm = await this.formsService.createFormInTeam(userId, {
         title,
@@ -214,11 +209,7 @@ export class FormsController {
         status.CREATED,
       );
     } catch (error) {
-      return errorResponse(
-        res,
-        ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
-        status.INTERNAL_SERVER_ERROR,
-      );
+      return errorResponse(res);
     }
   };
 
@@ -228,7 +219,7 @@ export class FormsController {
   ) => {
     try {
       const { title, logoUrl, settings, elements, folder } = req.body;
-      const userId = req.session.userId;
+      const { userId } = req.session;
 
       if (!canEdit(userId, folder.permissions as Prisma.JsonObject)) {
         return errorResponse(
@@ -252,11 +243,7 @@ export class FormsController {
         status.CREATED,
       );
     } catch (error) {
-      return errorResponse(
-        res,
-        ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
-        status.INTERNAL_SERVER_ERROR,
-      );
+      return errorResponse(res);
     }
   };
 
@@ -266,12 +253,16 @@ export class FormsController {
   ) => {
     try {
       const { title, logoUrl, settings, elements, folder, team } = req.body;
-      const userId = req.session.userId;
+      const { userId } = req.session;
 
       const folderExistsInTeam =
         await this.teamsService.checkFolderExistsInTeam(team.id, folder.id);
       if (!folderExistsInTeam) {
-        return errorResponse(res, TEAM_ERROR_MESSAGES.FOLDER_NOT_IN_TEAM);
+        return errorResponse(
+          res,
+          TEAM_ERROR_MESSAGES.FOLDER_NOT_IN_TEAM,
+          status.BAD_REQUEST,
+        );
       }
 
       if (!canEdit(userId, folder.permissions as Prisma.JsonObject)) {
@@ -297,11 +288,7 @@ export class FormsController {
         status.CREATED,
       );
     } catch (error) {
-      return errorResponse(
-        res,
-        ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
-        status.INTERNAL_SERVER_ERROR,
-      );
+      return errorResponse(res);
     }
   };
 
@@ -310,7 +297,7 @@ export class FormsController {
     res: Response,
   ) => {
     try {
-      const userId = req.session.userId;
+      const { userId } = req.session;
       const { title, logoUrl, settings, elements, form } = req.body;
 
       if (!canEdit(userId, form.permissions as Prisma.JsonObject)) {
@@ -333,11 +320,7 @@ export class FormsController {
         FORM_SUCCESS_MESSAGES.UPDATE_FORM_SUCCESS,
       );
     } catch (error) {
-      return errorResponse(
-        res,
-        ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
-        status.INTERNAL_SERVER_ERROR,
-      );
+      return errorResponse(res);
     }
   };
 
@@ -346,7 +329,7 @@ export class FormsController {
     res: Response,
   ) => {
     try {
-      const userId = req.session.userId;
+      const { userId } = req.session;
       const { form } = req.body;
 
       if (!canDelete(userId, form.permissions as Prisma.JsonObject)) {
@@ -373,11 +356,7 @@ export class FormsController {
         );
       }
     } catch (error) {
-      return errorResponse(
-        res,
-        ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
-        status.INTERNAL_SERVER_ERROR,
-      );
+      return errorResponse(res);
     }
   };
 
@@ -396,11 +375,7 @@ export class FormsController {
         FORM_SUCCESS_MESSAGES.RESTORE_FORM_SUCCESS,
       );
     } catch (error) {
-      return errorResponse(
-        res,
-        ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
-        status.INTERNAL_SERVER_ERROR,
-      );
+      return errorResponse(res);
     }
   };
 
@@ -409,7 +384,7 @@ export class FormsController {
     res: Response,
   ) => {
     try {
-      const userId = req.session.userId;
+      const { userId } = req.session;
       const { form } = req.body;
 
       const favouriteFormsOfUser =
@@ -437,11 +412,7 @@ export class FormsController {
         );
       }
     } catch (error) {
-      return errorResponse(
-        res,
-        ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
-        status.INTERNAL_SERVER_ERROR,
-      );
+      return errorResponse(res);
     }
   };
 }

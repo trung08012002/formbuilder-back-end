@@ -3,11 +3,7 @@ import status from 'http-status';
 
 import { CustomRequest } from '@/types/customRequest.types';
 
-import {
-  ERROR_MESSAGES,
-  USER_ERROR_MESSAGES,
-  USER_SUCCESS_MESSAGES,
-} from '../constants';
+import { USER_ERROR_MESSAGES, USER_SUCCESS_MESSAGES } from '../constants';
 import { LoginSchemaType, SignUpSchemaType } from '../schemas/users.schemas';
 import { AuthService, getAuthService } from '../services/auth.service';
 import {
@@ -42,7 +38,11 @@ export class AuthController {
       const isExistedUser = await this.authService.checkExist(email);
 
       if (isExistedUser)
-        return errorResponse(res, USER_ERROR_MESSAGES.USER_ALREADY_EXISTS);
+        return errorResponse(
+          res,
+          USER_ERROR_MESSAGES.USER_ALREADY_EXISTS,
+          status.BAD_REQUEST,
+        );
 
       const newUser = await this.authService.createUser(
         email,
@@ -60,13 +60,10 @@ export class AuthController {
         res,
         { token },
         USER_SUCCESS_MESSAGES.USER_CREATED,
+        status.CREATED,
       );
     } catch (error) {
-      return errorResponse(
-        res,
-        ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
-        status.INTERNAL_SERVER_ERROR,
-      );
+      return errorResponse(res);
     }
   };
 
@@ -75,10 +72,19 @@ export class AuthController {
       const { email, password } = req.body;
       const user = await this.authService.getUserByEmail(email);
 
-      if (!user) return errorResponse(res, USER_ERROR_MESSAGES.USER_NOT_FOUND);
+      if (!user)
+        return errorResponse(
+          res,
+          USER_ERROR_MESSAGES.USER_NOT_FOUND,
+          status.NOT_FOUND,
+        );
 
       if (!comparePassword(password, user.password))
-        return errorResponse(res, USER_ERROR_MESSAGES.INCORRECT_INFORMATION);
+        return errorResponse(
+          res,
+          USER_ERROR_MESSAGES.INCORRECT_INFORMATION,
+          status.BAD_REQUEST,
+        );
 
       const payload = {
         userId: user.id,
@@ -92,11 +98,7 @@ export class AuthController {
         USER_SUCCESS_MESSAGES.LOGIN_SUCCESS,
       );
     } catch (error) {
-      return errorResponse(
-        res,
-        ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
-        status.INTERNAL_SERVER_ERROR,
-      );
+      return errorResponse(res);
     }
   };
 }

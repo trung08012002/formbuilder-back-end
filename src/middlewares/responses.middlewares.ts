@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import status from 'http-status';
 
-import { ERROR_MESSAGES, RESPONSES_ERROR_MESSAGES } from '../constants';
+import { RESPONSES_ERROR_MESSAGES } from '../constants';
 import {
   getResponsesService,
   ResponsesService,
@@ -32,6 +32,6 @@ export const checkResponseExistence = async (
     req.body.response = existingResponse;
     next();
   } catch (error) {
-    return errorResponse(res, ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
+    return errorResponse(res);
   }
 };

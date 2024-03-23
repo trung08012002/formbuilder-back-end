@@ -4,7 +4,7 @@ import status from 'http-status';
 
 import { CustomRequest } from '@/types/customRequest.types';
 
-import { ERROR_MESSAGES, TEAM_ERROR_MESSAGES } from '../constants';
+import { TEAM_ERROR_MESSAGES } from '../constants';
 import { getTeamsService, TeamsService } from '../services/teams.service';
 import { errorResponse } from '../utils';
 
@@ -32,7 +32,7 @@ export const checkTeamExistence = async (
 
     next();
   } catch (error) {
-    return errorResponse(res, ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
+    return errorResponse(res);
   }
 };
 
@@ -59,6 +59,6 @@ export const checkMemberExistsInTeam = async (
 
     next();
   } catch (error) {
-    return errorResponse(res, ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
+    return errorResponse(res);
   }
 };

@@ -67,7 +67,7 @@ export const FORM_SUCCESS_MESSAGES = {
 
 export const FORM_ERROR_MESSAGES = {
   FORM_NOT_FOUND: 'Form not found',
-  UNDEFINED_TYPE_OF_ELEMENT: 'Undefined type of element',
+  INVALID_TYPE_OF_ELEMENT: 'Invalid type of element',
   REQUIRED_FIELD_IN_HEADING_CONFIG:
     "This field is required in property 'config' of the heading element",
   REQUIRED_FIELD_IN_FULLNAME_CONFIG:

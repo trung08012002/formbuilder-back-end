@@ -4,11 +4,7 @@ import status from 'http-status';
 
 import { CustomRequest } from '@/types/customRequest.types';
 
-import {
-  ERROR_MESSAGES,
-  USER_ERROR_MESSAGES,
-  USER_SUCCESS_MESSAGES,
-} from '../constants';
+import { USER_ERROR_MESSAGES, USER_SUCCESS_MESSAGES } from '../constants';
 import {
   ChangePasswordSchemaType,
   UpdateUserSchemaType,
@@ -55,11 +51,7 @@ export class UsersController {
         USER_SUCCESS_MESSAGES.GET_LIST_USER,
       );
     } catch (error) {
-      return errorResponse(
-        res,
-        ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
-        status.INTERNAL_SERVER_ERROR,
-      );
+      return errorResponse(res);
     }
   };
 
@@ -82,11 +74,7 @@ export class UsersController {
 
       return successResponse(res, returnUser, USER_SUCCESS_MESSAGES.GET_USER);
     } catch (error) {
-      return errorResponse(
-        res,
-        ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
-        status.INTERNAL_SERVER_ERROR,
-      );
+      return errorResponse(res);
     }
   };
 
@@ -111,11 +99,7 @@ export class UsersController {
         USER_SUCCESS_MESSAGES.DELETE_USER_SUCCESS,
       );
     } catch (error) {
-      return errorResponse(
-        res,
-        ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
-        status.INTERNAL_SERVER_ERROR,
-      );
+      return errorResponse(res);
     }
   };
 
@@ -127,20 +111,24 @@ export class UsersController {
       const { currentPassword, newPassword, user } = req.body;
 
       if (!comparePassword(currentPassword, user.password ?? ''))
-        return errorResponse(res, USER_ERROR_MESSAGES.INCORRECT_PASSWORD);
+        return errorResponse(
+          res,
+          USER_ERROR_MESSAGES.INCORRECT_PASSWORD,
+          status.BAD_REQUEST,
+        );
 
       if (currentPassword === newPassword)
-        return errorResponse(res, USER_ERROR_MESSAGES.INVALID_NEW_PASSWORD);
+        return errorResponse(
+          res,
+          USER_ERROR_MESSAGES.INVALID_NEW_PASSWORD,
+          status.BAD_REQUEST,
+        );
 
       await this.usersService.changePassword(Number(user.id), newPassword);
 
       return successResponse(res, {}, USER_SUCCESS_MESSAGES.CHANGE_PW_SUCCESS);
     } catch (error) {
-      return errorResponse(
-        res,
-        ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
-        status.INTERNAL_SERVER_ERROR,
-      );
+      return errorResponse(res);
     }
   };
 
@@ -149,14 +137,18 @@ export class UsersController {
     res: Response,
   ) => {
     try {
-      const userId = req.session.userId;
+      const { userId } = req.session;
       const { username, email, avatarUrl, organizationName, organizationLogo } =
         req.body;
 
       if (email) {
         const isRegisteredEmail = await this.authService.checkExist(email);
         if (isRegisteredEmail)
-          return errorResponse(res, USER_ERROR_MESSAGES.USER_ALREADY_EXISTS);
+          return errorResponse(
+            res,
+            USER_ERROR_MESSAGES.USER_ALREADY_EXISTS,
+            status.BAD_REQUEST,
+          );
       }
 
       await this.usersService.updateUserByID(Number(userId), {
@@ -173,11 +165,7 @@ export class UsersController {
         USER_SUCCESS_MESSAGES.UPDATE_USER_SUCCESS,
       );
     } catch (error) {
-      return errorResponse(
-        res,
-        ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
-        status.INTERNAL_SERVER_ERROR,
-      );
+      return errorResponse(res);
     }
   };
 }

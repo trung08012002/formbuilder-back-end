@@ -14,7 +14,7 @@ export const getResponsesService = () => {
 export class ResponsesService {
   public createResponse = async (
     formId: number,
-    response: CreatedResponseSchema,
+    payload: CreatedResponseSchema,
   ) =>
     prisma.$transaction(async (tx) => {
       const form = await tx.form.findFirstOrThrow({
@@ -26,7 +26,7 @@ export class ResponsesService {
         data: { totalSubmissions: form.totalSubmissions + 1 },
       });
       return tx.response.create({
-        data: { formId, formAnswers: [...response.formAnswers] },
+        data: { formId, formAnswers: [...payload.formAnswers] },
       });
     });
 

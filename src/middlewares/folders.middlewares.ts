@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import status from 'http-status';
 
-import { ERROR_MESSAGES, FOLDER_ERROR_MESSAGES } from '../constants';
+import { FOLDER_ERROR_MESSAGES } from '../constants';
 import { FoldersService, getFoldersService } from '../services/folders.service';
 import { errorResponse } from '../utils';
 
@@ -26,6 +26,6 @@ export const checkFolderExistence = async (
     req.body.folder = existingFolder;
     next();
   } catch (error) {
-    return errorResponse(res, ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
+    return errorResponse(res);
   }
 };
