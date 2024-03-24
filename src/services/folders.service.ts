@@ -83,10 +83,11 @@ export class FoldersService {
       return createdFolder;
     });
 
-  public getAllFoldersOfUser = (userId: number) =>
+  public getAllFoldersOfUser = (userId: number, teamId?: number | null) =>
     prisma.folder.findMany({
       where: {
         creatorId: userId,
+        teamId,
       },
       include: {
         forms: true,

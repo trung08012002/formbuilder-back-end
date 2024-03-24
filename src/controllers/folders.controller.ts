@@ -91,6 +91,21 @@ export class FoldersController {
     }
   };
 
+  public getIndependentFolders = async (req: Request, res: Response) => {
+    try {
+      const { userId } = req.session;
+
+      const folders = await this.foldersService.getAllFoldersOfUser(
+        userId,
+        null,
+      );
+
+      return successResponse(res, folders);
+    } catch (error) {
+      return errorResponse(res);
+    }
+  };
+
   public getFolderDetails = async (
     req: CustomRequest<{ folder: Folder }>,
     res: Response,

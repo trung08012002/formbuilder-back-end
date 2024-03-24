@@ -20,6 +20,12 @@ const foldersRoute = Router();
 const foldersController: FoldersController = getFoldersController();
 
 foldersRoute.get(
+  ROUTES.FOLDER.GET_INDEPENDENT_FOLDERS,
+  verifyToken,
+  checkUserExistence,
+  foldersController.getIndependentFolders,
+);
+foldersRoute.get(
   ROUTES.FOLDER.GET_FOLDER_DETAILS,
   verifyToken,
   checkUserExistence,

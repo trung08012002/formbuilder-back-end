@@ -37,6 +37,7 @@ export const ROUTES = {
   },
   FOLDER: {
     PATH: '/folders',
+    GET_INDEPENDENT_FOLDERS: '/independent',
     GET_FOLDER_DETAILS: '/:folderId',
     UPDATE_FOLDER: '/:folderId',
     DELETE_FOLDER: '/:folderId',
