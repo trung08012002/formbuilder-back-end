@@ -60,9 +60,9 @@ const settingsSchema = z
 const fieldsSchema = z
   .object(
     {
-      id: z.number({
+      id: z.string({
         required_error: ERROR_MESSAGES.REQUIRED_FIELD,
-        invalid_type_error: ERROR_MESSAGES.REQUIRED_NUMBER_TYPE,
+        invalid_type_error: ERROR_MESSAGES.REQUIRED_STRING_TYPE,
       }),
       name: z
         .string({ required_error: ERROR_MESSAGES.REQUIRED_FIELD })
