@@ -1,11 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import status from 'http-status';
 
-import { FOLDER_ERROR_MESSAGES } from '../constants';
-import { FoldersService, getFoldersService } from '../services/folders.service';
-import { errorResponse } from '../utils';
-
-const foldersService: FoldersService = getFoldersService();
+import { errorResponse, findFolderById } from '../utils';
 
 export const checkFolderExistence = async (
   req: Request,
@@ -14,15 +9,7 @@ export const checkFolderExistence = async (
 ) => {
   try {
     const { folderId } = req.params;
-
-    const existingFolder = await foldersService.getFolderById(Number(folderId));
-    if (!existingFolder) {
-      return errorResponse(
-        res,
-        FOLDER_ERROR_MESSAGES.FOLDER_NOT_FOUND,
-        status.NOT_FOUND,
-      );
-    }
+    const existingFolder = await findFolderById(Number(folderId), res);
     req.body.folder = existingFolder;
     next();
   } catch (error) {

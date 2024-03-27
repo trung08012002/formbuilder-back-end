@@ -198,13 +198,27 @@ export class FormsService {
       orderBy: {
         [args.sortField]: args.sortDirection,
       },
+      include: {
+        favouritedByUsers: {
+          select: {
+            id: true,
+            email: true,
+          },
+        },
+        folder: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
     });
 
   public getTotalFormsByUserId = (
     userId: number,
     args: Pick<
       GetFormsArgs,
-      'isDeleted' | 'isFavourite' | 'folderId' | 'teamId'
+      'isDeleted' | 'isFavourite' | 'folderId' | 'teamId' | 'searchText'
     >,
   ) =>
     prisma.form.count({
@@ -212,6 +226,9 @@ export class FormsService {
         creatorId: userId,
         folderId: args.folderId || undefined,
         teamId: args.teamId || null,
+        title: {
+          contains: args.searchText,
+        },
         deletedAt: args.isDeleted ? { not: null } : null,
         favouritedByUsers: args.isFavourite
           ? { some: { id: userId } }
@@ -317,15 +334,6 @@ export class FormsService {
         },
       },
     });
-
-  public getFavouritedByUsersOfForm = (formId: number) =>
-    prisma.form
-      .findUnique({
-        where: {
-          id: formId,
-        },
-      })
-      .favouritedByUsers();
 
   public removeFormPermissions = async (
     tx: Omit<

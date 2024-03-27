@@ -1,14 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import status from 'http-status';
 
-import { RESPONSES_ERROR_MESSAGES } from '../constants';
-import {
-  getResponsesService,
-  ResponsesService,
-} from '../services/responses.service';
-import { errorResponse } from '../utils';
-
-const responsesService: ResponsesService = getResponsesService();
+import { errorResponse, findResponseById } from '../utils';
 
 export const checkResponseExistence = async (
   req: Request,
@@ -17,18 +9,7 @@ export const checkResponseExistence = async (
 ) => {
   try {
     const { responseId } = req.params;
-
-    const existingResponse = await responsesService.getResponseById(
-      Number(responseId),
-    );
-    if (!existingResponse) {
-      return errorResponse(
-        res,
-        RESPONSES_ERROR_MESSAGES.RESPONSE_NOT_FOUND,
-        status.NOT_FOUND,
-      );
-    }
-
+    const existingResponse = await findResponseById(Number(responseId), res);
     req.body.response = existingResponse;
     next();
   } catch (error) {

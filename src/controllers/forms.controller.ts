@@ -18,6 +18,7 @@ import {
   GetFormsQueryParamsSchemaType,
   UpdateFormSchemaType,
 } from '../schemas/forms.schemas';
+import { FoldersService, getFoldersService } from '../services/folders.service';
 import { FormsService, getFormsService } from '../services/forms.service';
 import { getTeamsService, TeamsService } from '../services/teams.service';
 import { getUsersService, UsersService } from '../services/users.service';
@@ -27,6 +28,8 @@ import {
   canEdit,
   canView,
   errorResponse,
+  findFolderById,
+  findTeamById,
   successResponse,
 } from '../utils';
 
@@ -44,11 +47,13 @@ export class FormsController {
   private formsService: FormsService;
   private usersService: UsersService;
   private teamsService: TeamsService;
+  private foldersService: FoldersService;
 
   public constructor() {
     this.formsService = getFormsService();
     this.usersService = getUsersService();
     this.teamsService = getTeamsService();
+    this.foldersService = getFoldersService();
   }
 
   public getAllForms = async (
@@ -89,7 +94,16 @@ export class FormsController {
         );
       }
 
+      if (folderId) {
+        await findFolderById(Number(folderId), res);
+      }
+
+      if (teamId) {
+        await findTeamById(Number(teamId), res);
+      }
+
       const totalForms = await this.formsService.getTotalFormsByUserId(userId, {
+        searchText,
         isDeleted,
         isFavourite,
         folderId,
@@ -97,8 +111,8 @@ export class FormsController {
       });
       const totalPages = Math.ceil(totalForms / pageSize);
 
-      const offset = searchText ? 0 : (page - 1) * pageSize;
-      const limit = searchText ? totalForms : pageSize;
+      const offset = (page - 1) * pageSize;
+      const limit = pageSize;
 
       const forms = await this.formsService.getFormsByUserId(userId, {
         offset,
@@ -112,22 +126,17 @@ export class FormsController {
         teamId,
       });
 
-      const formsWithFavouriteStatus = await Promise.all(
-        forms.map(async (form) => {
-          const favouritedByUsersOfForm =
-            await this.formsService.getFavouritedByUsersOfForm(form.id);
-          const isFavourite =
-            favouritedByUsersOfForm?.findIndex((user) => user.id === userId) !==
-            -1;
-          return {
-            ...form,
-            isFavourite,
-          };
-        }),
-      );
+      const formsResponseData = forms.map((form) => {
+        const isFavourite =
+          form.favouritedByUsers.findIndex((user) => user.id === userId) !== -1;
+        return {
+          ...form,
+          isFavourite,
+        };
+      });
 
       const responseData = {
-        forms: formsWithFavouriteStatus,
+        forms: formsResponseData,
         page,
         pageSize,
         totalForms,

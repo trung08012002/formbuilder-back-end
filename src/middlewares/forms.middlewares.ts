@@ -30,11 +30,8 @@ import {
   submitConfigSchema,
   timeConfigSchema,
 } from '../schemas/forms.schemas';
-import { FormsService, getFormsService } from '../services/forms.service';
 import { ELEMENT_TYPE } from '../types/forms.types';
-import { errorResponse, validateData } from '../utils';
-
-const formsService: FormsService = getFormsService();
+import { errorResponse, findFormById, validateData } from '../utils';
 
 export const validateConfigSchema = async (
   req: Request,
@@ -293,15 +290,7 @@ export const checkFormExistence = async (
 ) => {
   try {
     const { formId } = req.params;
-
-    const existingForm = await formsService.getFormById(Number(formId));
-    if (!existingForm) {
-      return errorResponse(
-        res,
-        FORM_ERROR_MESSAGES.FORM_NOT_FOUND,
-        status.NOT_FOUND,
-      );
-    }
+    const existingForm = await findFormById(Number(formId), res);
     req.body.form = existingForm;
     next();
   } catch (error) {

@@ -89,9 +89,6 @@ export class FoldersService {
         creatorId: userId,
         teamId,
       },
-      include: {
-        forms: true,
-      },
     });
 
   public getTotalFoldersByUserId = (userId: number) =>

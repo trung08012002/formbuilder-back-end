@@ -6,7 +6,7 @@ import { CustomRequest } from '@/types/customRequest.types';
 
 import { TEAM_ERROR_MESSAGES } from '../constants';
 import { getTeamsService, TeamsService } from '../services/teams.service';
-import { errorResponse } from '../utils';
+import { errorResponse, findTeamById } from '../utils';
 
 const teamsService: TeamsService = getTeamsService();
 
@@ -17,19 +17,8 @@ export const checkTeamExistence = async (
 ) => {
   try {
     const { teamId } = req.params;
-
-    const existingTeam = await teamsService.getTeamById(Number(teamId));
-
-    if (!existingTeam) {
-      return errorResponse(
-        res,
-        TEAM_ERROR_MESSAGES.TEAM_NOT_FOUND,
-        status.NOT_FOUND,
-      );
-    }
-
+    const existingTeam = await findTeamById(Number(teamId), res);
     req.body.team = existingTeam;
-
     next();
   } catch (error) {
     return errorResponse(res);
