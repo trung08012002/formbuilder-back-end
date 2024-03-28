@@ -187,9 +187,30 @@ export class FormsService {
         creatorId: userId,
         folderId: args.folderId || undefined,
         teamId: args.teamId || null,
-        title: {
-          contains: args.searchText,
-        },
+        OR: [
+          {
+            title: {
+              contains: args.searchText,
+            },
+          },
+          {
+            title: {
+              contains:
+                args.searchText.charAt(0).toUpperCase() +
+                args.searchText.slice(1).toLowerCase(),
+            },
+          },
+          {
+            title: {
+              contains: args.searchText.toUpperCase(),
+            },
+          },
+          {
+            title: {
+              contains: args.searchText.toLowerCase(),
+            },
+          },
+        ],
         deletedAt: args.isDeleted ? { not: null } : null,
         favouritedByUsers: args.isFavourite
           ? { some: { id: userId } }
@@ -226,9 +247,30 @@ export class FormsService {
         creatorId: userId,
         folderId: args.folderId || undefined,
         teamId: args.teamId || null,
-        title: {
-          contains: args.searchText,
-        },
+        OR: [
+          {
+            title: {
+              contains: args.searchText,
+            },
+          },
+          {
+            title: {
+              contains:
+                args.searchText.charAt(0).toUpperCase() +
+                args.searchText.slice(1).toLowerCase(),
+            },
+          },
+          {
+            title: {
+              contains: args.searchText.toUpperCase(),
+            },
+          },
+          {
+            title: {
+              contains: args.searchText.toLowerCase(),
+            },
+          },
+        ],
         deletedAt: args.isDeleted ? { not: null } : null,
         favouritedByUsers: args.isFavourite
           ? { some: { id: userId } }
