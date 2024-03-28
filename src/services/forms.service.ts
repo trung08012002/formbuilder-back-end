@@ -430,6 +430,9 @@ export class FormsService {
               id: teamId,
             },
           },
+          folder: {
+            disconnect: true,
+          },
         },
       });
     });
