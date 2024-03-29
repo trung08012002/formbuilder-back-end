@@ -55,6 +55,7 @@ export const ROUTES = {
     PATH: '/responses',
     GET_RESPONSES_BY_FORMID: '/:formId',
     CREATE_RESPONSE: '/:formId',
-    DELETE_RESPONSE: '/:responseId/form/:formId',
+    DELETE_RESPONSE: '/:formId/:responseId',
+    DELETE_MANY_RESPONSES: '/:formId',
   },
 };

@@ -45,4 +45,12 @@ responseRoute.delete(
   responsesController.deleteResponse,
 );
 
+responseRoute.delete(
+  ROUTES.RESPONSE.DELETE_MANY_RESPONSES,
+  verifyToken,
+  checkUserExistence,
+  checkFormExistence,
+  responsesController.deleteMultipleResponses,
+);
+
 export default responseRoute;

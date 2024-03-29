@@ -1,6 +1,7 @@
 import { Form, Response } from '@prisma/client';
 import { Response as ExpressResponse } from 'express';
 import status from 'http-status';
+import keyBy from 'lodash/keyBy';
 
 import {
   RESPONSES_ERROR_MESSAGES,
@@ -16,7 +17,9 @@ import {
 import { CustomRequest } from '@/types/customRequest.types';
 import {
   calculatePagination,
+  convertRawResponseToExtraInfoResponse,
   errorResponse,
+  getHasFieldLabelElementIdAndName,
   isDateActions,
   isOtherFieldsActions,
   successResponse,
@@ -107,9 +110,27 @@ export class ResponsesController {
         sortField,
         sortDirection,
       });
+
+      const elementIdAndNameList = getHasFieldLabelElementIdAndName(
+        form.elements,
+      );
+
+      const elementListByIdObject = keyBy(form.elements, 'id');
+
+      const updatedResponses = responses.map((response) =>
+        convertRawResponseToExtraInfoResponse(elementListByIdObject, response),
+      );
+
       return successResponse(
         res,
-        { responses, page, pageSize, totalResponses, totalPages },
+        {
+          elementIdAndNameList: elementIdAndNameList,
+          responses: updatedResponses,
+          page,
+          pageSize,
+          totalResponses,
+          totalPages,
+        },
         RESPONSES_SUCCESS_MESSAGES.RESPONSE_GET_SUCCESS,
       );
     } catch (error) {
@@ -127,6 +148,7 @@ export class ResponsesController {
     try {
       const { form, formAnswers } = req.body;
       const createdResponse = await this.responsesService.createResponse(
+        form.totalSubmissions,
         form.id,
         { formAnswers },
       );
@@ -135,6 +157,37 @@ export class ResponsesController {
         createdResponse,
         RESPONSES_SUCCESS_MESSAGES.RESPONSE_CREATED,
         status.CREATED,
+      );
+    } catch (error) {
+      return errorResponse(res);
+    }
+  };
+
+  public deleteMultipleResponses = async (
+    req: CustomRequest<{ responsesIds: number[]; form: Form }>,
+    res: ExpressResponse,
+  ) => {
+    try {
+      const { formId } = req.params;
+      const { responsesIds, form } = req.body;
+      if (!responsesIds || !formId) {
+        return errorResponse(
+          res,
+          RESPONSES_ERROR_MESSAGES.ID_PARAMS_NOT_FOUND,
+          status.UNPROCESSABLE_ENTITY,
+        );
+      }
+
+      const deletedResponses = this.responsesService.deleteMultipleResponses(
+        form.totalSubmissions,
+        parseInt(formId),
+        responsesIds,
+      );
+
+      return successResponse(
+        res,
+        deletedResponses,
+        RESPONSES_SUCCESS_MESSAGES.RESPONSE_DELETED,
       );
     } catch (error) {
       return errorResponse(res);
@@ -151,6 +204,7 @@ export class ResponsesController {
       const { form, response } = req.body;
 
       const deletedResponse = await this.responsesService.deleteResponse(
+        form.totalSubmissions,
         form.id,
         response.id,
       );

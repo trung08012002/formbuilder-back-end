@@ -13,32 +13,29 @@ export const getResponsesService = () => {
 
 export class ResponsesService {
   public createResponse = async (
+    totalSubmissions: number,
     formId: number,
     payload: CreatedResponseSchema,
   ) =>
     prisma.$transaction(async (tx) => {
-      const form = await tx.form.findFirstOrThrow({
-        where: { id: formId },
-        select: { totalSubmissions: true },
-      });
       await tx.form.update({
         where: { id: formId },
-        data: { totalSubmissions: form.totalSubmissions + 1 },
+        data: { totalSubmissions: totalSubmissions + 1 },
       });
       return tx.response.create({
         data: { formId, formAnswers: [...payload.formAnswers] },
       });
     });
 
-  public deleteResponse = async (formId: number, responseId: number) =>
+  public deleteResponse = async (
+    totalSubmissions: number,
+    formId: number,
+    responseId: number,
+  ) =>
     prisma.$transaction(async (tx) => {
-      const form = await tx.form.findFirstOrThrow({
-        where: { id: formId },
-        select: { totalSubmissions: true },
-      });
       await tx.form.update({
         where: { id: formId },
-        data: { totalSubmissions: form.totalSubmissions - 1 },
+        data: { totalSubmissions: totalSubmissions - 1 },
       });
       return tx.response.delete({
         where: {
@@ -47,11 +44,29 @@ export class ResponsesService {
       });
     });
 
-  public getResponseById = (responseId: number) =>
+  public getResponseById = async (responseId: number) =>
     prisma.response.findUnique({
       where: {
         id: responseId,
       },
+    });
+  public deleteMultipleResponses = async (
+    totalSubmissions: number,
+    formId: number,
+    responsesIds: number[],
+  ) =>
+    prisma.$transaction(async (tx) => {
+      await tx.form.update({
+        where: { id: formId },
+        data: { totalSubmissions: totalSubmissions - responsesIds.length },
+      });
+      return tx.response.deleteMany({
+        where: {
+          id: {
+            in: responsesIds,
+          },
+        },
+      });
     });
 
   public getResponsesByFormId = async (props: GetResponsesByFormIdParams) => {

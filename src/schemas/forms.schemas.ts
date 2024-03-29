@@ -103,31 +103,32 @@ const gridSizeSchema = z
   )
   .strict();
 
-const elementsSchema = z
-  .object(
-    {
-      id: z.string({
-        required_error: ERROR_MESSAGES.REQUIRED_FIELD,
-        invalid_type_error: ERROR_MESSAGES.REQUIRED_STRING_TYPE,
-      }),
-      type: z
-        .string({ required_error: ERROR_MESSAGES.REQUIRED_FIELD })
-        .min(1, ERROR_MESSAGES.NO_EMPTY_FIELD),
-      fields: fieldsSchema,
-      gridSize: gridSizeSchema,
-      config: z.object(
-        {},
-        {
-          required_error: ERROR_MESSAGES.REQUIRED_FIELD,
-          invalid_type_error: ERROR_MESSAGES.REQUIRED_OBJECT_TYPE,
-        },
-      ),
-    },
-    {
+const elementSchema = z.object(
+  {
+    id: z.string({
       required_error: ERROR_MESSAGES.REQUIRED_FIELD,
-      invalid_type_error: ERROR_MESSAGES.REQUIRED_ARRAY_TYPE,
-    },
-  )
+      invalid_type_error: ERROR_MESSAGES.REQUIRED_STRING_TYPE,
+    }),
+    type: z
+      .string({ required_error: ERROR_MESSAGES.REQUIRED_FIELD })
+      .min(1, ERROR_MESSAGES.NO_EMPTY_FIELD),
+    fields: fieldsSchema,
+    gridSize: gridSizeSchema,
+    config: z.object(
+      {},
+      {
+        required_error: ERROR_MESSAGES.REQUIRED_FIELD,
+        invalid_type_error: ERROR_MESSAGES.REQUIRED_OBJECT_TYPE,
+      },
+    ),
+  },
+  {
+    required_error: ERROR_MESSAGES.REQUIRED_FIELD,
+    invalid_type_error: ERROR_MESSAGES.REQUIRED_ARRAY_TYPE,
+  },
+);
+
+const elementsSchema = elementSchema
   .strict()
   .array()
   .nonempty({ message: ERROR_MESSAGES.NO_EMPTY_FIELD });
@@ -769,3 +770,5 @@ export type UpdateFormSchemaType = z.infer<typeof UpdateFormSchema>;
 export type GetFormsQueryParamsSchemaType = z.infer<
   typeof GetFormsQueryParamsSchema
 >;
+
+export type ElementSchema = z.infer<typeof elementSchema>;
