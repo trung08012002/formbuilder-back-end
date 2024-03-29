@@ -338,6 +338,7 @@ export const longTextConfigSchema = z
       required_error: FORM_ERROR_MESSAGES.REQUIRED_FIELD_IN_LONG_TEXT_CONFIG,
       invalid_type_error: ERROR_MESSAGES.REQUIRED_BOOLEAN_TYPE,
     }),
+    placeholder: z.string().optional(),
     sublabel: z
       .string({
         required_error: FORM_ERROR_MESSAGES.REQUIRED_FIELD_IN_LONG_TEXT_CONFIG,
