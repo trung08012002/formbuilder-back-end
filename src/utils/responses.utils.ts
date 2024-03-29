@@ -3,7 +3,7 @@ import { JsonValue } from '@prisma/client/runtime/library';
 import { Response } from 'express';
 import status from 'http-status';
 import isUndefined from 'lodash.isundefined';
-import toString from 'lodash/tostring';
+import toString from 'lodash.tostring';
 
 import { ElementResponseSchema } from '@/schemas/createResponse.schemas';
 import { ElementSchema } from '@/schemas/forms.schemas';
