@@ -184,7 +184,14 @@ export class FormsService {
       skip: args.offset,
       take: args.limit,
       where: {
-        creatorId: userId,
+        permissions: {
+          path: [userId.toString()],
+          array_contains: [
+            PERMISSIONS.VIEW,
+            PERMISSIONS.EDIT,
+            PERMISSIONS.DELETE,
+          ],
+        },
         folderId: args.folderId || undefined,
         teamId: args.teamId || null,
         OR: [
@@ -244,7 +251,14 @@ export class FormsService {
   ) =>
     prisma.form.count({
       where: {
-        creatorId: userId,
+        permissions: {
+          path: [userId.toString()],
+          array_contains: [
+            PERMISSIONS.VIEW,
+            PERMISSIONS.EDIT,
+            PERMISSIONS.DELETE,
+          ],
+        },
         folderId: args.folderId || undefined,
         teamId: args.teamId || null,
         OR: [
@@ -505,7 +519,6 @@ export class FormsService {
         [userId]: [PERMISSIONS.VIEW, PERMISSIONS.EDIT, PERMISSIONS.DELETE],
       };
 
-      // remove form from team and update permissions for form
       await tx.form.update({
         where: {
           id: formId,
@@ -513,6 +526,9 @@ export class FormsService {
         data: {
           permissions: newFormPermissions,
           team: {
+            disconnect: true,
+          },
+          folder: {
             disconnect: true,
           },
         },
