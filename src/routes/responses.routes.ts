@@ -29,8 +29,6 @@ responseRoute.get(
 
 responseRoute.post(
   ROUTES.RESPONSE.CREATE_RESPONSE,
-  verifyToken,
-  checkUserExistence,
   validateCreatedResponse,
   checkFormExistence,
   responsesController.createResponse,

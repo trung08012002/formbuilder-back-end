@@ -26,7 +26,6 @@ import { CustomRequest } from '../types/customRequest.types';
 import {
   canDelete,
   canEdit,
-  canView,
   errorResponse,
   findFolderById,
   findTeamById,
@@ -153,17 +152,7 @@ export class FormsController {
     res: Response,
   ) => {
     try {
-      const { userId } = req.session;
-
       const { form } = req.body;
-
-      if (!canView(userId, form.permissions as Prisma.JsonObject)) {
-        return errorResponse(
-          res,
-          ERROR_MESSAGES.ACCESS_DENIED,
-          status.FORBIDDEN,
-        );
-      }
 
       return successResponse(res, form);
     } catch (error) {

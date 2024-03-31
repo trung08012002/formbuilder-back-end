@@ -25,8 +25,6 @@ const formsController: FormsController = getFormsController();
 
 formsRoute.get(
   ROUTES.FORM.GET_FORM_DETAILS,
-  verifyToken,
-  checkUserExistence,
   checkFormExistence,
   formsController.getFormDetails,
 );
