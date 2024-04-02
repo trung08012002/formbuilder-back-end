@@ -30,6 +30,7 @@ import {
   submitConfigSchema,
   timeConfigSchema,
 } from '../schemas/forms.schemas';
+import { ElementsSchema } from '../schemas/forms.schemas';
 import { ELEMENT_TYPE } from '../types/forms.types';
 import { errorResponse, findFormById, validateData } from '../utils';
 
@@ -39,9 +40,9 @@ export const validateConfigSchema = async (
   next: NextFunction,
 ) => {
   try {
-    const { elements } = req.body;
+    const elements = req.body.elements as ElementsSchema;
     if (elements) {
-      let errorElementId;
+      let errorElement;
       for (const element of elements) {
         switch (element.type) {
           case ELEMENT_TYPE.HEADING: {
@@ -50,7 +51,7 @@ export const validateConfigSchema = async (
               element.config,
             );
             if (result?.error) {
-              errorElementId = element.id;
+              errorElement = element.type;
             }
             break;
           }
@@ -60,7 +61,7 @@ export const validateConfigSchema = async (
               element.config,
             );
             if (result?.error) {
-              errorElementId = element.id;
+              errorElement = element.type;
             }
             break;
           }
@@ -70,7 +71,7 @@ export const validateConfigSchema = async (
               element.config,
             );
             if (result?.error) {
-              errorElementId = element.id;
+              errorElement = element.type;
             }
             break;
           }
@@ -80,7 +81,7 @@ export const validateConfigSchema = async (
               element.config,
             );
             if (result?.error) {
-              errorElementId = element.id;
+              errorElement = element.type;
             }
             break;
           }
@@ -90,7 +91,7 @@ export const validateConfigSchema = async (
               element.config,
             );
             if (result?.error) {
-              errorElementId = element.id;
+              errorElement = element.type;
             }
             break;
           }
@@ -100,7 +101,7 @@ export const validateConfigSchema = async (
               element.config,
             );
             if (result?.error) {
-              errorElementId = element.id;
+              errorElement = element.type;
             }
             break;
           }
@@ -110,7 +111,7 @@ export const validateConfigSchema = async (
               element.config,
             );
             if (result?.error) {
-              errorElementId = element.id;
+              errorElement = element.type;
             }
             break;
           }
@@ -120,7 +121,7 @@ export const validateConfigSchema = async (
               element.config,
             );
             if (result?.error) {
-              errorElementId = element.id;
+              errorElement = element.type;
             }
             break;
           }
@@ -130,7 +131,7 @@ export const validateConfigSchema = async (
               element.config,
             );
             if (result?.error) {
-              errorElementId = element.id;
+              errorElement = element.type;
             }
             break;
           }
@@ -140,7 +141,7 @@ export const validateConfigSchema = async (
               element.config,
             );
             if (result?.error) {
-              errorElementId = element.id;
+              errorElement = element.type;
             }
             break;
           }
@@ -150,7 +151,7 @@ export const validateConfigSchema = async (
               element.config,
             );
             if (result?.error) {
-              errorElementId = element.id;
+              errorElement = element.type;
             }
             break;
           }
@@ -160,7 +161,7 @@ export const validateConfigSchema = async (
               element.config,
             );
             if (result?.error) {
-              errorElementId = element.id;
+              errorElement = element.type;
             }
             break;
           }
@@ -170,7 +171,7 @@ export const validateConfigSchema = async (
               element.config,
             );
             if (result?.error) {
-              errorElementId = element.id;
+              errorElement = element.type;
             }
             break;
           }
@@ -180,7 +181,7 @@ export const validateConfigSchema = async (
               element.config,
             );
             if (result?.error) {
-              errorElementId = element.id;
+              errorElement = element.type;
             }
             break;
           }
@@ -190,14 +191,14 @@ export const validateConfigSchema = async (
               element.config,
             );
             if (result?.error) {
-              errorElementId = element.id;
+              errorElement = element.type;
             }
             break;
           }
           case ELEMENT_TYPE.TIME: {
             const result = await validateData(timeConfigSchema, element.config);
             if (result?.error) {
-              errorElementId = element.id;
+              errorElement = element.type;
             }
             break;
           }
@@ -207,7 +208,7 @@ export const validateConfigSchema = async (
               element.config,
             );
             if (result?.error) {
-              errorElementId = element.id;
+              errorElement = element.type;
             }
             break;
           }
@@ -217,7 +218,7 @@ export const validateConfigSchema = async (
               element.config,
             );
             if (result?.error) {
-              errorElementId = element.id;
+              errorElement = element.type;
             }
             break;
           }
@@ -227,7 +228,7 @@ export const validateConfigSchema = async (
               element.config,
             );
             if (result?.error) {
-              errorElementId = element.id;
+              errorElement = element.type;
             }
             break;
           }
@@ -237,7 +238,7 @@ export const validateConfigSchema = async (
               element.config,
             );
             if (result?.error) {
-              errorElementId = element.id;
+              errorElement = element.type;
             }
             break;
           }
@@ -247,7 +248,7 @@ export const validateConfigSchema = async (
               element.config,
             );
             if (result?.error) {
-              errorElementId = element.id;
+              errorElement = element.type;
             }
             break;
           }
@@ -257,7 +258,7 @@ export const validateConfigSchema = async (
               element.config,
             );
             if (result?.error) {
-              errorElementId = element.id;
+              errorElement = element.type;
             }
             break;
           }
@@ -269,10 +270,10 @@ export const validateConfigSchema = async (
             );
         }
       }
-      if (errorElementId) {
+      if (errorElement) {
         return errorResponse(
           res,
-          `Property 'config' in element with ID: ${errorElementId} is invalid`,
+          `Property 'config' in ${errorElement} element is invalid`,
           status.BAD_REQUEST,
         );
       }
