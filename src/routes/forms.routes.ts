@@ -74,6 +74,13 @@ formsRoute.post(
   formsController.createFormInFolderOfTeam,
 );
 formsRoute.patch(
+  ROUTES.FORM.UPDATE_DISABLED_STATUS,
+  verifyToken,
+  checkUserExistence,
+  checkFormExistence,
+  formsController.updateDisabledStatus,
+);
+formsRoute.patch(
   ROUTES.FORM.UPDATE_FORM,
   verifyToken,
   checkUserExistence,

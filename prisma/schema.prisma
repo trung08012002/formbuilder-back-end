@@ -36,6 +36,7 @@ model Form {
   title             String
   logoUrl           String?    @map("logo_url")
   settings          Json
+  disabled          Boolean    @default(false)
   totalSubmissions  Int        @default(0) @map("total_submissions")
   elements          Json[]
   permissions       Json?

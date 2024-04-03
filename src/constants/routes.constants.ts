@@ -25,6 +25,7 @@ export const ROUTES = {
     GET_FORM_DETAILS: '/:formId',
     UPDATE_FORM: '/:formId',
     DELETE_FORM: '/:formId',
+    UPDATE_DISABLED_STATUS: '/:formId/disabled/:disabled',
     RESTORE_FORM: '/:formId/restore',
     FAVOURITES: '/:formId/favourites',
     CREATE_FORM_IN_TEAM: '/team/:teamId',

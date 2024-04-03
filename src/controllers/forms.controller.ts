@@ -1,4 +1,4 @@
-import { Folder, Form, Prisma, Team } from '@prisma/client';
+import { Folder, Form, Prisma, Team, User } from '@prisma/client';
 import { Response } from 'express';
 import status from 'http-status';
 
@@ -312,6 +312,33 @@ export class FormsController {
         settings,
         elements,
       });
+      return successResponse(
+        res,
+        updatedForm,
+        FORM_SUCCESS_MESSAGES.UPDATE_FORM_SUCCESS,
+      );
+    } catch (error) {
+      return errorResponse(res);
+    }
+  };
+  public updateDisabledStatus = async (
+    req: CustomRequest<{ form: Form; user: User }>,
+    res: Response,
+  ) => {
+    try {
+      const form = req.body.form;
+      const user = req.body.user;
+      if (form.creatorId !== user.id)
+        return errorResponse(
+          res,
+          ERROR_MESSAGES.ACCESS_DENIED,
+          status.FORBIDDEN,
+        );
+      const { disabled } = req.params;
+      const updatedForm = await this.formsService.updateDisabledStatus(
+        form.id,
+        disabled.toLowerCase() === 'true',
+      );
       return successResponse(
         res,
         updatedForm,

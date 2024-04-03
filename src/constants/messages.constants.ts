@@ -72,6 +72,7 @@ export const FORM_SUCCESS_MESSAGES = {
 };
 
 export const FORM_ERROR_MESSAGES = {
+  IS_DISABLED: 'Form is disabled',
   FORM_NOT_FOUND: 'Form not found',
   INVALID_TYPE_OF_ELEMENT: 'Invalid type of element',
   REQUIRED_FIELD_IN_HEADING_CONFIG:

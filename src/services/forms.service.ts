@@ -312,6 +312,16 @@ export class FormsService {
       },
     });
 
+  public updateDisabledStatus = (formId: number, disabled: boolean) =>
+    prisma.form.update({
+      where: {
+        id: formId,
+      },
+      data: {
+        disabled: disabled,
+      },
+    });
+
   public softDeleteForm = (formId: number) =>
     prisma.form.update({
       where: {
