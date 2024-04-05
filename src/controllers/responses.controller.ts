@@ -178,11 +178,12 @@ export class ResponsesController {
         );
       }
 
-      const deletedResponses = this.responsesService.deleteMultipleResponses(
-        form.totalSubmissions,
-        parseInt(formId),
-        responsesIds,
-      );
+      const deletedResponses =
+        await this.responsesService.deleteMultipleResponses(
+          form.totalSubmissions,
+          parseInt(formId),
+          responsesIds,
+        );
 
       return successResponse(
         res,
