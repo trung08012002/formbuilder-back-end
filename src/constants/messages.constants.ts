@@ -169,4 +169,5 @@ export const RESPONSES_ERROR_MESSAGES = {
   INVALID_SORT_DIRECTION: 'Invalid sort direction',
   RESPONSE_NOT_FOUND: 'Response not found',
   ID_PARAMS_NOT_FOUND: 'Id parameters not found',
+  FORM_HAS_DISABLED: 'Your form is currently unable to receive submissions',
 } as const;

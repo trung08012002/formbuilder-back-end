@@ -147,6 +147,8 @@ export class ResponsesController {
   ) => {
     try {
       const { form, formAnswers } = req.body;
+      if (form.disabled)
+        return errorResponse(res, RESPONSES_ERROR_MESSAGES.FORM_HAS_DISABLED);
       const createdResponse = await this.responsesService.createResponse(
         form.totalSubmissions,
         form.id,
