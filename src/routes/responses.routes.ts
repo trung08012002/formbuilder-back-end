@@ -29,8 +29,8 @@ responseRoute.get(
 
 responseRoute.post(
   ROUTES.RESPONSE.CREATE_RESPONSE,
-  validateCreatedResponse,
   checkFormExistence,
+  validateCreatedResponse,
   responsesController.createResponse,
 );
 

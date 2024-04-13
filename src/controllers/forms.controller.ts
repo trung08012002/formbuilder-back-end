@@ -326,15 +326,17 @@ export class FormsController {
     res: Response,
   ) => {
     try {
-      const form = req.body.form;
-      const user = req.body.user;
+      const { form, user } = req.body;
+
       if (form.creatorId !== user.id)
         return errorResponse(
           res,
           ERROR_MESSAGES.ACCESS_DENIED,
           status.FORBIDDEN,
         );
+
       const { disabled } = req.params;
+
       const updatedForm = await this.formsService.updateDisabledStatus(
         form.id,
         disabled.toLowerCase() === 'true',

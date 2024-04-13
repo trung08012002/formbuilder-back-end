@@ -147,11 +147,13 @@ export class ResponsesController {
   ) => {
     try {
       const { form, formAnswers } = req.body;
-      if (form.disabled)
+
+      if (form.disabled || form.deletedAt !== null)
         return errorResponse(
           res,
           RESPONSES_ERROR_MESSAGES.FORM_NOT_ACCEPTING_RESPONSES,
         );
+
       const createdResponse = await this.responsesService.createResponse(
         form.totalSubmissions,
         form.id,
