@@ -5,10 +5,9 @@ import status from 'http-status';
 import isUndefined from 'lodash.isundefined';
 import toString from 'lodash.tostring';
 
-import { ElementResponseSchema } from '@/schemas/createResponse.schemas';
-import { ElementSchema } from '@/schemas/forms.schemas';
-
 import { RESPONSES_ERROR_MESSAGES } from '../constants';
+import { ElementResponseSchema } from '../schemas/createResponse.schemas';
+import { ElementSchema } from '../schemas/forms.schemas';
 import {
   getResponsesService,
   ResponsesService,
@@ -78,6 +77,11 @@ export const getHasFieldLabelElementIdAndName = (elements: JsonValue[]) =>
   elements
     .filter((element: JsonValue) =>
       isKeyOfObject('fieldLabel', (element as ElementSchema).config),
+    )
+    .sort(
+      (firstValue, secondValue) =>
+        (firstValue as ElementSchema).gridSize.y -
+        (secondValue as ElementSchema).gridSize.y,
     )
     .map((element: JsonValue) => ({
       elementId: (element as ElementSchema).id,
