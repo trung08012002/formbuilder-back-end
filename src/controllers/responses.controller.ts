@@ -1,4 +1,5 @@
 import { Form, Response } from '@prisma/client';
+import Excel from 'exceljs';
 import { Response as ExpressResponse } from 'express';
 import status from 'http-status';
 import keyBy from 'lodash/keyBy';
@@ -8,7 +9,10 @@ import {
   RESPONSES_SUCCESS_MESSAGES,
   SORT_DIRECTIONS,
 } from '@/constants';
-import { CreatedResponseSchema } from '@/schemas/createResponse.schemas';
+import {
+  CreatedResponseSchema,
+  ElementResponseSchema,
+} from '@/schemas/createResponse.schemas';
 import { filterObjectSchema } from '@/schemas/filterObject.schemas';
 import {
   getResponsesService,
@@ -16,6 +20,7 @@ import {
 } from '@/services/responses.service';
 import { CustomRequest } from '@/types/customRequest.types';
 import {
+  adjustColumnWidth,
   calculatePagination,
   convertRawResponseToExtraInfoResponse,
   errorResponse,
@@ -221,6 +226,54 @@ export class ResponsesController {
         deletedResponse,
         RESPONSES_SUCCESS_MESSAGES.RESPONSE_DELETED,
       );
+    } catch (error) {
+      return errorResponse(res);
+    }
+  };
+  public exportResponse = async (
+    req: CustomRequest<{ form: Form }>,
+    res: ExpressResponse,
+  ) => {
+    try {
+      const workbook = new Excel.Workbook();
+      const worksheet = workbook.addWorksheet('list of responses');
+      const { form } = req.body;
+      const elementIdAndNameList = getHasFieldLabelElementIdAndName(
+        form.elements,
+      );
+      const columns = [
+        {
+          key: 'id',
+          header: 'Id',
+        },
+        {
+          key: 'Submission At',
+          header: 'Submission At',
+        },
+      ];
+      columns.push(
+        ...elementIdAndNameList.map((element) => ({
+          key: element.elementId,
+          header: element.elementName,
+        })),
+      );
+      worksheet.columns = columns;
+
+      const allResponses = await this.responsesService.getAllResponsesByFormId(
+        form.id,
+      );
+
+      allResponses.forEach((response) => {
+        const elementAnswers = response.formAnswers.map((elementAnswer) =>
+          (elementAnswer as ElementResponseSchema).answers
+            .map((fieldAnswer) => fieldAnswer.text)
+            .join(' '),
+        );
+
+        worksheet.addRow([response.id, response.createdAt, ...elementAnswers]);
+      });
+      adjustColumnWidth(worksheet);
+      await workbook.xlsx.write(res).then(() => res.status(200).end());
     } catch (error) {
       return errorResponse(res);
     }

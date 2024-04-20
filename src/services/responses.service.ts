@@ -86,4 +86,8 @@ export class ResponsesService {
       },
     });
   };
+  public getAllResponsesByFormId = (formId: number) =>
+    prisma.response.findMany({
+      where: { formId: formId },
+    });
 }

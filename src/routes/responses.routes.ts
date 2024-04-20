@@ -27,6 +27,14 @@ responseRoute.get(
   responsesController.getAllResponseByFormId,
 );
 
+responseRoute.get(
+  ROUTES.RESPONSE.EXPORT_RESPONSES,
+  verifyToken,
+  checkUserExistence,
+  checkFormExistence,
+  responsesController.exportResponse,
+);
+
 responseRoute.post(
   ROUTES.RESPONSE.CREATE_RESPONSE,
   checkFormExistence,

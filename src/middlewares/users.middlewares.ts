@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
+import status from 'http-status';
 
 import { errorResponse, findUserById } from '../utils';
 
@@ -9,10 +10,14 @@ export const checkUserExistence = async (
 ) => {
   try {
     const { userId } = req.session;
-    const existingUser = await findUserById(userId, res);
+    const existingUser = await findUserById(userId);
     req.body.user = existingUser;
-    next();
+    return next();
   } catch (error) {
-    return errorResponse(res);
+    return errorResponse(
+      res,
+      (error as { message: string }).message,
+      status.UNAUTHORIZED,
+    );
   }
 };
