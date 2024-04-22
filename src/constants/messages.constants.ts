@@ -162,6 +162,7 @@ export const RESPONSES_SUCCESS_MESSAGES = {
   RESPONSE_UPDATED: 'Response updated successfully',
   RESPONSE_DELETED: 'Response deleted successfully',
   RESPONSE_GET_SUCCESS: 'Response get successfully',
+  RESPONSE_EXPORT_SUCCESS: 'Response export successfully',
 } as const;
 
 export const RESPONSES_ERROR_MESSAGES = {

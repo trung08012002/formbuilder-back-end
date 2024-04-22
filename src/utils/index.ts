@@ -1,6 +1,7 @@
 export * from './auth.utils';
 export * from './checkPermissions.utils';
 export * from './dataValidation.utils';
+export * from './excel.utils';
 export * from './filterUtils';
 export * from './folders.utils';
 export * from './forms.utils';
