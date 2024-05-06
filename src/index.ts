@@ -10,6 +10,7 @@ import authRoute from './routes/auth.routes';
 import foldersRoute from './routes/folders.routes';
 import formsRoute from './routes/forms.routes';
 import imagesRoute from './routes/images.routes';
+import openAiRouter from './routes/openAi.routes';
 import responseRoute from './routes/responses.routes';
 import teamsRoute from './routes/teams.routes';
 import usersRoute from './routes/users.routes';
@@ -53,6 +54,8 @@ app.use(ROUTES.FOLDER.PATH, foldersRoute);
 app.use(ROUTES.RESPONSE.PATH, responseRoute);
 
 app.use(ROUTES.TEAM.PATH, teamsRoute);
+
+app.use(ROUTES.OPEN_AI.PATH, openAiRouter);
 
 app.use((req: Request, res: Response) =>
   errorResponse(res, ERROR_MESSAGES.NOT_FOUND_ROUTES, NOT_FOUND),
