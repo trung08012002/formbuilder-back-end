@@ -59,6 +59,8 @@ export const ROUTES = {
     CREATE_RESPONSE: '/:formId',
     DELETE_RESPONSE: '/:formId/:responseId',
     DELETE_MANY_RESPONSES: '/:formId',
+    GET_STATISTICS: '/statistics/:formId',
+    GET_DATE_STATISTICS: '/statistics/date/:formId',
   },
   OPEN_AI: {
     PATH: '/open-ai',

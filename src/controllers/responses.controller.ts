@@ -22,6 +22,9 @@ import { CustomRequest } from '@/types/customRequest.types';
 import {
   adjustColumnWidth,
   calculatePagination,
+  convertFormElementsToIdAndElementNameRecord,
+  convertRawResponseToAnswerAndRate,
+  convertRawResponseToAnswerAndRateDate,
   convertRawResponseToExtraInfoResponse,
   errorResponse,
   getHasFieldLabelElementIdAndName,
@@ -145,7 +148,6 @@ export class ResponsesController {
       return errorResponse(res);
     }
   };
-
   public createResponse = async (
     req: CustomRequest<CreatedResponseSchema & { form: Form }>,
     res: ExpressResponse,
@@ -274,6 +276,51 @@ export class ResponsesController {
       });
       adjustColumnWidth(worksheet);
       await workbook.xlsx.write(res).then(() => res.status(200).end());
+    } catch (error) {
+      return errorResponse(res);
+    }
+  };
+  public getStatistic = async (
+    req: CustomRequest<{ form: Form }>,
+    res: ExpressResponse,
+  ) => {
+    try {
+      const { form } = req.body;
+
+      const responses = await this.responsesService.getAllResponsesByFormId(
+        form.id,
+      );
+
+      const result = convertRawResponseToAnswerAndRate(
+        convertFormElementsToIdAndElementNameRecord(form.elements),
+        responses.map(
+          (response) =>
+            ({ formAnswers: response.formAnswers }) as CreatedResponseSchema,
+        ),
+      );
+
+      return successResponse(res, result, RESPONSES_SUCCESS_MESSAGES.STATISTIC);
+    } catch (error) {
+      return errorResponse(res);
+    }
+  };
+  public getDateDataStatistic = async (
+    req: CustomRequest<{ form: Form }>,
+    res: ExpressResponse,
+  ) => {
+    try {
+      const { form } = req.body;
+
+      const responses = await this.responsesService.getAllResponsesByFormId(
+        form.id,
+      );
+
+      const result = convertRawResponseToAnswerAndRateDate(
+        convertFormElementsToIdAndElementNameRecord(form.elements),
+        responses,
+      );
+
+      return successResponse(res, result, RESPONSES_SUCCESS_MESSAGES.STATISTIC);
     } catch (error) {
       return errorResponse(res);
     }

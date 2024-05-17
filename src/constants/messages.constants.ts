@@ -163,6 +163,7 @@ export const RESPONSES_SUCCESS_MESSAGES = {
   RESPONSE_DELETED: 'Response deleted successfully',
   RESPONSE_GET_SUCCESS: 'Response get successfully',
   RESPONSE_EXPORT_SUCCESS: 'Response export successfully',
+  STATISTIC: 'get statistic successfully',
 } as const;
 
 export const RESPONSES_ERROR_MESSAGES = {
