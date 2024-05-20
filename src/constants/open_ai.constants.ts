@@ -16,6 +16,10 @@ The provided elements will be in the format:
 \`\`\`
 Response will be in JSON format, which is a list of objects with the elements and their configs.
 
+the request format:
+ question()
+() is optional
+
 list of element:
 [
     {
@@ -64,22 +68,22 @@ list of element:
         }
     },
     {
-        Single Choice: For question has multiple options and note that has only one answer and input format contain that the answer only is one string or if has no answer use this element
-        config:{
-           fieldLabel: question of single choice(required),
-           sublabel: note for single choice field(optional, default value: sublabel:'Choose your answer'),
-           options: the available options to answer the question (optional,default value:[]),
-           otherOption: the option for user to choose out of the list(optional, default value: null)
-        }
-    },
-    {
-        Multiple Choice: For question has multiple options and note that has multiple answers and input format contain that the answers are a array string
+        Multiple Choice: For question has multiple options and request has (answers:string[])
         config:{
             fieldLabel: question of multiple choice(required),
             sublabel: note for multiple choice field(optional, default value: sublabel:'Choose your answers'),
             options: the available options to answer the question (optional,default value:[]),
             otherOption: the option for user to choose out of the list(optional, default value: null)
         } 
+    },
+    {
+        Single Choice: For question has multiple options and request has (answer:string) or nothing:
+        config:{
+           fieldLabel: question of single choice(required),
+           sublabel: note for single choice field(optional, default value: sublabel:'Choose your answer'),
+           options: the available options to answer the question (optional,default value:[]),
+           otherOption: the option for user to choose out of the list(optional, default value:  {isDisplayed: false,text:'Other'}
+        }
     },
     {
         time: For only time
