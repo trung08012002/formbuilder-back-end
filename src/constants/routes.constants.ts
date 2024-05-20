@@ -66,8 +66,4 @@ export const ROUTES = {
     PATH: '/open-ai',
     GET_QUESTION: '/get-question',
   },
-  OPEN_AI: {
-    PATH: '/open-ai',
-    GET_QUESTION: '/get-question',
-  },
 };
