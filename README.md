@@ -1,6 +1,6 @@
-# formify-be
+# formbuilder-be
 
-Jan 2024 Internship Formify Backend
+Formbuilder
 
 # Pre-requisites
 

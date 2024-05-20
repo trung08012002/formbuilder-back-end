@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import status from 'http-status';
+import httpStatus from 'http-status';
 
 import { CustomRequest } from '@/types/customRequest.types';
 
@@ -291,8 +292,16 @@ export const checkFormExistence = async (
 ) => {
   try {
     const { formId } = req.params;
-    const existingForm = await findFormById(Number(formId), res);
+    const existingForm = await findFormById(Number(formId));
+    if (existingForm === null) {
+      return errorResponse(
+        res,
+        FORM_ERROR_MESSAGES.FORM_NOT_FOUND,
+        httpStatus.NOT_FOUND,
+      );
+    }
     req.body.form = existingForm;
+
     next();
   } catch (error) {
     return errorResponse(res);

@@ -58,5 +58,20 @@ responseRoute.delete(
   checkFormExistence,
   responsesController.deleteMultipleResponses,
 );
+responseRoute.get(
+  ROUTES.RESPONSE.GET_STATISTICS,
+  verifyToken,
+  checkUserExistence,
+  checkFormExistence,
+  responsesController.getStatistic,
+);
+
+responseRoute.get(
+  ROUTES.RESPONSE.GET_DATE_STATISTICS,
+  verifyToken,
+  checkUserExistence,
+  checkFormExistence,
+  responsesController.getDateDataStatistic,
+);
 
 export default responseRoute;
