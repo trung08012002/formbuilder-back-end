@@ -94,11 +94,11 @@ export class FormsController {
       }
 
       if (folderId) {
-        await findFolderById(Number(folderId), res);
+        await findFolderById(Number(folderId));
       }
 
       if (teamId) {
-        await findTeamById(Number(teamId), res);
+        await findTeamById(Number(teamId));
       }
 
       const totalForms = await this.formsService.getTotalFormsByUserId(userId, {
