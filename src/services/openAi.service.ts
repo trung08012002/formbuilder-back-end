@@ -41,7 +41,6 @@ export class OpenAiService {
       ],
     });
     const content = completion.choices[0].message.content;
-    console.log('OpenAI Output:\n ', content);
     let result;
     if (content && content.includes('{') && content.includes('}')) {
       if (content.startsWith('[')) {
@@ -50,9 +49,6 @@ export class OpenAiService {
         result = [JSON.parse(content)];
       }
     }
-
-    console.log('After parse: \n', result);
-
     return result;
   };
 }

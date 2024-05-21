@@ -23,26 +23,17 @@ const formsRoute = Router();
 
 const formsController: FormsController = getFormsController();
 
+formsRoute.post(
+  ROUTES.FORM.IMPORT_GOOGLE_FORM,
+  formsController.importGoogleForm,
+);
+
 formsRoute.get(
   ROUTES.FORM.GET_FORM_DETAILS,
   checkFormExistence,
   formsController.getFormDetails,
 );
-formsRoute.get(
-  ROUTES.ROOT.PATH,
-  verifyToken,
-  checkUserExistence,
-  validateGetFormQueryParamsSchema,
-  formsController.getAllForms,
-);
-formsRoute.post(
-  ROUTES.ROOT.PATH,
-  verifyToken,
-  checkUserExistence,
-  validateCreateFormSchema,
-  validateConfigSchema,
-  formsController.createForm,
-);
+
 formsRoute.post(
   ROUTES.FORM.CREATE_FORM_IN_TEAM,
   verifyToken,
@@ -143,6 +134,22 @@ formsRoute.patch(
   checkTeamExistence,
   checkMemberExistsInTeam,
   formsController.moveBackToMyForms,
+);
+
+formsRoute.get(
+  ROUTES.ROOT.PATH,
+  verifyToken,
+  checkUserExistence,
+  validateGetFormQueryParamsSchema,
+  formsController.getAllForms,
+);
+formsRoute.post(
+  ROUTES.ROOT.PATH,
+  verifyToken,
+  checkUserExistence,
+  validateCreateFormSchema,
+  validateConfigSchema,
+  formsController.createForm,
 );
 
 export default formsRoute;
