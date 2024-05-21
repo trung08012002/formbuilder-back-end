@@ -35,6 +35,7 @@ export const ROUTES = {
     REMOVE_FROM_FOLDER: '/:formId/folder/:folderId/remove',
     MOVE_TO_TEAM: '/:formId/team/:teamId/add',
     MOVE_BACK_TO_MY_FORMS: '/:formId/team/:teamId/remove',
+    IMPORT_GOOGLE_FORM: '/import',
   },
   FOLDER: {
     PATH: '/folders',

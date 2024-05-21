@@ -558,4 +558,16 @@ export class FormsController {
       return errorResponse(res);
     }
   };
+  public importGoogleForm = async (
+    req: CustomRequest<{ formUrl: string }>,
+    res: Response,
+  ) => {
+    try {
+      const { formUrl } = req.body;
+      const mappedForm = await this.formsService.importGoogleForms(formUrl);
+      return successResponse(res, mappedForm);
+    } catch (error) {
+      return errorResponse(res);
+    }
+  };
 }

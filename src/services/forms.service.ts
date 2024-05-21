@@ -1,5 +1,7 @@
 import { Prisma, PrismaClient } from '@prisma/client';
 import { DefaultArgs } from '@prisma/client/runtime/library';
+import { GoogleAuth } from 'google-auth-library';
+import { google } from 'googleapis';
 import _omit from 'lodash.omit';
 
 import prisma from '../configs/db.config';
@@ -8,7 +10,7 @@ import {
   CreateFormSchemaType,
   UpdateFormSchemaType,
 } from '../schemas/forms.schemas';
-import { GetFormsArgs } from '../types/forms.types';
+import { ELEMENT_TYPE, GetFormsArgs } from '../types/forms.types';
 import { PERMISSIONS } from '../types/permissions.types';
 
 let instance: FormsService | null = null;
@@ -544,4 +546,130 @@ export class FormsService {
         },
       });
     });
+  public importGoogleForms = async (formUrl: string) => {
+    const ggFormId = formUrl.split('/')[formUrl.split('/').length - 2];
+
+    const auth = new GoogleAuth({
+      keyFile: './src/google_form_api_key.json',
+      scopes: [
+        'https://www.googleapis.com/auth/forms.body.readonly',
+        'https://www.googleapis.com/auth/forms',
+        'https://www.googleapis.com/auth/forms.currentonly',
+      ],
+    });
+
+    const forms = google.forms({ version: 'v1', auth: auth });
+    const ggFormRes = await forms.forms.get({
+      formId: ggFormId,
+    });
+
+    const ggForm = ggFormRes.data;
+
+    const elements = ggForm.items
+      ?.map((item) => {
+        const { title: questionTitle, questionItem } = item;
+
+        if (
+          questionItem?.question?.textQuestion &&
+          !questionItem?.question?.textQuestion?.paragraph
+        ) {
+          return {
+            type: ELEMENT_TYPE.SHORT_TEXT,
+            config: {
+              fieldLabel: questionTitle || '',
+              required: questionItem.question.required || false,
+            },
+          };
+        }
+        if (
+          questionItem?.question?.textQuestion &&
+          questionItem?.question?.textQuestion?.paragraph
+        ) {
+          return {
+            type: ELEMENT_TYPE.LONG_TEXT,
+            config: {
+              fieldLabel: questionTitle || '',
+              required: questionItem.question.required || false,
+            },
+          };
+        }
+        if (questionItem?.question?.choiceQuestion?.type === 'RADIO') {
+          return {
+            type: ELEMENT_TYPE.SINGLE_CHOICE,
+            config: {
+              fieldLabel: questionTitle || '',
+              required: questionItem.question.required || false,
+              options: questionItem.question.choiceQuestion.options?.map(
+                (option) => option.value,
+              ),
+            },
+          };
+        }
+        if (questionItem?.question?.choiceQuestion?.type === 'CHECKBOX') {
+          return {
+            type: ELEMENT_TYPE.MULTIPLE_CHOICE,
+            config: {
+              fieldLabel: questionTitle || '',
+              required: questionItem.question.required || false,
+              options: questionItem.question.choiceQuestion.options?.map(
+                (option) => option.value,
+              ),
+            },
+          };
+        }
+        if (questionItem?.question?.choiceQuestion?.type === 'DROP_DOWN') {
+          return {
+            type: ELEMENT_TYPE.DROPDOWN,
+            config: {
+              fieldLabel: questionTitle || '',
+              required: questionItem.question.required || false,
+              options: questionItem.question.choiceQuestion.options?.map(
+                (option) => option.value,
+              ),
+            },
+          };
+        }
+        if (questionItem?.question?.scaleQuestion) {
+          return {
+            type: ELEMENT_TYPE.SCALE_RATING,
+            config: {
+              fieldLabel: questionTitle || '',
+              required: questionItem.question.required || false,
+              lowestRatingText: questionItem.question.scaleQuestion.lowLabel,
+              highestRatingText: questionItem.question.scaleQuestion.highLabel,
+              lowestRatingValue: questionItem.question.scaleQuestion.low || 0,
+              highestRatingValue: questionItem.question.scaleQuestion.high,
+            },
+          };
+        }
+        if (questionItem?.question?.dateQuestion) {
+          return {
+            type: ELEMENT_TYPE.DATEPICKER,
+            config: {
+              fieldLabel: questionTitle || '',
+              required: questionItem.question.required || false,
+            },
+          };
+        }
+        if (questionItem?.question?.timeQuestion) {
+          return {
+            type: ELEMENT_TYPE.TIME,
+            config: {
+              fieldLabel: questionTitle || '',
+              required: questionItem.question.required || false,
+            },
+          };
+        }
+
+        return undefined;
+      })
+      .filter((value) => value !== undefined);
+
+    const mappedForm = {
+      title: ggForm.info?.documentTitle || '',
+      settings: {},
+      elements,
+    };
+    return mappedForm;
+  };
 }
