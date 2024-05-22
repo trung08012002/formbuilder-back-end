@@ -11,22 +11,23 @@ datasource db {
 }
 
 model User {
-  id                Int       @id @default(autoincrement())
-  email             String    @unique
+  id                Int        @id @default(autoincrement())
+  email             String     @unique
   password          String
   username          String
-  avatarUrl         String?   @map("avatar_url")
-  organizationName  String?   @map("organization_name")
-  organizationLogo  String?   @map("organization_logo")
-  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt         DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
-  deletedAt         DateTime? @map("deleted_at") @db.Timestamptz(3)
-  passwordChangedAt DateTime? @map("password_changed_at") @db.Timestamptz(3)
-  createdForms      Form[]    @relation("CreatedForms")
-  favouriteForms    Form[]    @relation("FavouriteForms")
-  createdFolders    Folder[]  @relation("CreatedFolders")
-  createdTeams      Team[]    @relation("CreatedTeams")
-  teams             Team[]    @relation("TeamMembers")
+  avatarUrl         String?    @map("avatar_url")
+  organizationName  String?    @map("organization_name")
+  organizationLogo  String?    @map("organization_logo")
+  createdAt         DateTime   @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt         DateTime?  @updatedAt @map("updated_at") @db.Timestamptz(3)
+  deletedAt         DateTime?  @map("deleted_at") @db.Timestamptz(3)
+  passwordChangedAt DateTime?  @map("password_changed_at") @db.Timestamptz(3)
+  createdForms      Form[]     @relation("CreatedForms")
+  favouriteForms    Form[]     @relation("FavouriteForms")
+  createdFolders    Folder[]   @relation("CreatedFolders")
+  createdTeams      Team[]     @relation("CreatedTeams")
+  teams             Team[]     @relation("TeamMembers")
+  createdTemplates  Template[] @relation("CreatedTemplates")
 
   @@map("users")
 }
@@ -53,6 +54,36 @@ model Form {
   responses         Response[]
 
   @@map("forms")
+}
+
+model Template {
+  id              Int              @id @default(autoincrement())
+  title           String
+  logoUrl         String?          @map("logo_url")
+  imagePreviewUrl String?          @map("image_preview_url")
+  settings        Json
+  disabled        Boolean          @default(false)
+  useTotal        Int              @default(0) @map("use_total")
+  elements        Json[]
+  permissions     Json?
+  createdAt       DateTime         @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt       DateTime?        @updatedAt @map("updated_at") @db.Timestamptz(3)
+  deletedAt       DateTime?        @map("deleted_at") @db.Timestamptz(3)
+  creator         User             @relation("CreatedTemplates", fields: [creatorId], references: [id])
+  creatorId       Int              @map("creator_id")
+  categoryId      Int              @map("category_id")
+  category        CategoryTemplate @relation("CategoryTemplates", fields: [categoryId], references: [id])
+
+  @@map("templates")
+}
+
+model CategoryTemplate {
+  id          Int        @id @default(autoincrement())
+  title       String
+  description String
+  templates   Template[] @relation("CategoryTemplates")
+
+  @@map("category_templates")
 }
 
 model Folder {
