@@ -12,4 +12,5 @@ export * from './pagination.utils';
 export * from './pagination.utils';
 export * from './responses.utils';
 export * from './teams.utils';
+export * from './templates.utils';
 export * from './users.utils';

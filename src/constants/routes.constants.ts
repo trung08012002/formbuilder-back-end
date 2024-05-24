@@ -67,4 +67,12 @@ export const ROUTES = {
     PATH: '/open-ai',
     GET_QUESTION: '/get-question',
   },
+  TEMPLATE_CATEGORY: {
+    PATH: '/template-categories',
+    DELETE_TEMPLATE_CATEGORY: '/:categoryId',
+  },
+  TEMPLATE: {
+    PATH: '/templates',
+    GET_DETAIL: '/:templateId',
+  },
 };
