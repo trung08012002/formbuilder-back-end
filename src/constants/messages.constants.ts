@@ -1,4 +1,5 @@
 export const ERROR_MESSAGES = {
+  UNPROCESSABLE_ENTITY: 'Unprocessable Entity',
   ID_NOT_FOUND: 'Form ID can not be empty',
   INTERNAL_SERVER_ERROR: 'Internal Server Error',
   ACCESS_DENIED: 'Access denied',
@@ -52,6 +53,13 @@ export const USER_ERROR_MESSAGES = {
   NO_EMPTY_USERNAME: 'Username cannot be empty',
   INCORRECT_PASSWORD: 'Incorrect password',
   INVALID_NEW_PASSWORD: 'New password must be different from your old password',
+};
+
+export const TEMPLATE_CATEGORY_SUCCESS_MESSAGES = {
+  CREATE_TEMPLATE_CATEGORY_SUCCESS:
+    'Create a new template category successfully',
+  DELETE_TEMPLATE_CATEGORY_SUCCESS: 'Delete a template category successfully',
+  GET_ALL_TEMPLATE_CATEGORY_SUCCESS: 'Get all templates category successfully',
 };
 
 export const FORM_SUCCESS_MESSAGES = {

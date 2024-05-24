@@ -13,6 +13,8 @@ import imagesRoute from './routes/images.routes';
 import openAiRouter from './routes/openAi.routes';
 import responseRoute from './routes/responses.routes';
 import teamsRoute from './routes/teams.routes';
+import templateCategoryRoute from './routes/template_category.routes';
+import templatesRoute from './routes/templates.routes';
 import usersRoute from './routes/users.routes';
 import { swaggerDefinition } from './swaggerDocs/swaggerDefinition';
 import { ERROR_MESSAGES, ROUTES } from './constants';
@@ -56,6 +58,10 @@ app.use(ROUTES.RESPONSE.PATH, responseRoute);
 app.use(ROUTES.TEAM.PATH, teamsRoute);
 
 app.use(ROUTES.OPEN_AI.PATH, openAiRouter);
+
+app.use(ROUTES.TEMPLATE.PATH, templatesRoute);
+
+app.use(ROUTES.TEMPLATE_CATEGORY.PATH, templateCategoryRoute);
 
 app.use((req: Request, res: Response) =>
   errorResponse(res, ERROR_MESSAGES.NOT_FOUND_ROUTES, NOT_FOUND),
