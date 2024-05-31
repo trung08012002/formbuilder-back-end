@@ -1,10 +1,11 @@
-import { Template } from '@prisma/client';
+import { Prisma, Template } from '@prisma/client';
 import { Response } from 'express';
 import status from 'http-status';
 
 import {
   CreateTemplateSchemaType,
   GetTemplatesQueryParamsSchemaType,
+  UpdateTemplateSchemaType,
 } from '@/schemas/templates.schemas';
 import {
   getTemplatesService,
@@ -14,12 +15,14 @@ import {
 import {
   DEFAULT_PAGE,
   DEFAULT_PAGE_SIZE,
-  FORM_SUCCESS_MESSAGES,
+  ERROR_MESSAGES,
   SORT_FORM_DIRECTIONS,
   SORT_FORM_FIELDS,
+  TEMPLATE_ERROR_MESSAGES,
+  TEMPLATE_SUCCESS_MESSAGES,
 } from '../constants';
 import { CustomRequest } from '../types/customRequest.types';
-import { errorResponse, successResponse } from '../utils';
+import { canEdit, errorResponse, successResponse } from '../utils';
 
 let instance: TemplatesController | null = null;
 
@@ -130,11 +133,63 @@ export class TemplatesController {
       return successResponse(
         res,
         newTemplate,
-        FORM_SUCCESS_MESSAGES.CREATE_FORM_SUCCESS,
+        TEMPLATE_SUCCESS_MESSAGES.CREATE_FORM_SUCCESS,
         status.CREATED,
       );
     } catch (error) {
-      return errorResponse(res);
+      return errorResponse(res, TEMPLATE_ERROR_MESSAGES.CREATE_FORM_ERROR);
+    }
+  };
+  public updateTemplate = async (
+    req: CustomRequest<UpdateTemplateSchemaType & { template: Template }>,
+    res: Response,
+  ) => {
+    try {
+      const { userId } = req.session;
+      const {
+        title,
+        logoUrl,
+        settings,
+        elements,
+        categoryId,
+        description,
+        disabled,
+        isDelete,
+        imagePreviewUrl,
+        isValid,
+        template,
+      } = req.body;
+
+      if (!canEdit(userId, template.permissions as Prisma.JsonObject)) {
+        return errorResponse(
+          res,
+          ERROR_MESSAGES.ACCESS_DENIED,
+          status.FORBIDDEN,
+        );
+      }
+
+      const updatedForm = await this.templatesService.updateTemplate(
+        template.id,
+        {
+          title,
+          logoUrl,
+          settings,
+          elements,
+          categoryId,
+          description,
+          disabled,
+          isDelete,
+          imagePreviewUrl,
+          isValid,
+        },
+      );
+      return successResponse(
+        res,
+        updatedForm,
+        TEMPLATE_SUCCESS_MESSAGES.UPDATE_FORM_SUCCESS,
+      );
+    } catch (error) {
+      return errorResponse(res, TEMPLATE_ERROR_MESSAGES.UPDATE_FORM_ERROR);
     }
   };
 }

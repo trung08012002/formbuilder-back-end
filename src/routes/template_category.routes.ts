@@ -4,7 +4,11 @@ import {
   getTemplateCategoryController,
   TemplateCategoryController,
 } from '@/controllers/template_category.controller';
-import { checkUserExistence, verifyToken } from '@/middlewares';
+import {
+  checkUserExistence,
+  validateConfigSchema,
+  verifyToken,
+} from '@/middlewares';
 
 import { ROUTES } from '../constants';
 
@@ -22,6 +26,7 @@ templateCategoryRoute.post(
   ROUTES.ROOT.PATH,
   verifyToken,
   checkUserExistence,
+  validateConfigSchema,
   templateCategoryController.createTemplateCategory,
 );
 

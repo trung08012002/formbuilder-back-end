@@ -28,4 +28,12 @@ templatesRoute.get(
   templatesController.getTemplateDetail,
 );
 
+templatesRoute.get(
+  ROUTES.TEMPLATE.UPDATE_TEMPLATE,
+  verifyToken,
+  checkUserExistence,
+  checkTemplateExistence,
+  templatesController.updateTemplate,
+);
+
 export default templatesRoute;

@@ -16,6 +16,7 @@ export type UpdateTemplateSchemaType = UpdateFormSchemaType & {
   disabled?: boolean;
   isDelete?: boolean;
   imagePreviewUrl?: string;
+  isValid?: boolean;
 };
 
 export type GetTemplatesQueryParamsSchemaType = Pick<
