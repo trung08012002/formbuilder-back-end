@@ -5,7 +5,7 @@
   "main": "index.ts",
   "scripts": {
     "dev": "nodemon",
-    "build": "tsc --project tsconfig.json && tsc-alias -p tsconfig.json",
+    "build": "prisma generate && prisma migrate deploy && npx tsc --project tsconfig.json && tsc-alias -p tsconfig.json",
     "start": "node dist/index.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
