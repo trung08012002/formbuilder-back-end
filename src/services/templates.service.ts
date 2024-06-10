@@ -114,10 +114,16 @@ export class TemplatesService {
         logoUrl: payload.logoUrl,
         settings: payload.settings,
         elements: payload.elements,
-        categoryId: payload.categoryId,
+        description: payload.description,
+        category: {
+          connect: {
+            id: payload.categoryId,
+          },
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } as any,
         disabled: payload.disabled,
         isValid: payload.isValid,
-        ...(payload.isDelete ? { deleteAt: new Date() } : { deleteAt: null }),
+        ...(payload.isDelete ? { deletedAt: new Date() } : { deletedAt: null }),
       },
     });
 
