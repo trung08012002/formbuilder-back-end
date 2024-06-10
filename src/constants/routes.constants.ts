@@ -74,6 +74,6 @@ export const ROUTES = {
   TEMPLATE: {
     PATH: '/templates',
     GET_DETAIL: '/:templateId',
-    UPDATE_TEMPLATE: ':templateId',
+    UPDATE_TEMPLATE: '/:templateId',
   },
 };

@@ -5,7 +5,10 @@ import {
   TemplatesController,
 } from '@/controllers/templates.controller';
 import { checkUserExistence, verifyToken } from '@/middlewares';
-import { checkTemplateExistence } from '@/middlewares/template.middlewares';
+import {
+  checkTemplateExistence,
+  filterElements,
+} from '@/middlewares/template.middlewares';
 
 import { ROUTES } from '../constants';
 
@@ -25,10 +28,11 @@ templatesRoute.post(
 templatesRoute.get(
   ROUTES.TEMPLATE.GET_DETAIL,
   checkTemplateExistence,
+  filterElements,
   templatesController.getTemplateDetail,
 );
 
-templatesRoute.get(
+templatesRoute.patch(
   ROUTES.TEMPLATE.UPDATE_TEMPLATE,
   verifyToken,
   checkUserExistence,
