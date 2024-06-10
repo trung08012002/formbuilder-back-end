@@ -62,6 +62,16 @@ export const TEMPLATE_CATEGORY_SUCCESS_MESSAGES = {
   GET_ALL_TEMPLATE_CATEGORY_SUCCESS: 'Get all templates category successfully',
 };
 
+export const TEMPLATE_SUCCESS_MESSAGES = {
+  CREATE_FORM_SUCCESS: 'Template created successfully',
+  UPDATE_FORM_SUCCESS: 'Template updated successfully',
+};
+
+export const TEMPLATE_ERROR_MESSAGES = {
+  CREATE_FORM_ERROR: 'Template created unsuccessfully',
+  UPDATE_FORM_ERROR: 'Template updated unsuccessfully',
+};
+
 export const FORM_SUCCESS_MESSAGES = {
   CREATE_FORM_SUCCESS: 'Form created successfully',
   UPDATE_FORM_SUCCESS: 'Form updated successfully',

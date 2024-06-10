@@ -10,7 +10,7 @@ const imagesRoute = Router();
 imagesRoute.post(
   ROUTES.IMAGE.UPLOAD,
   verifyToken,
-  upload.single('image'),
+  upload.array('files'),
   imageController.uploadImage,
 );
 

@@ -17,10 +17,18 @@ export const getTemplatesService = () => {
 };
 
 export class TemplatesService {
-  public createTemplate = (userId: number, payload: CreateTemplateSchemaType) =>
+  public createTemplate = async (
+    userId: number,
+    payload: CreateTemplateSchemaType,
+  ) =>
     prisma.template.create({
       data: {
-        categoryId: payload.categoryId,
+        category: {
+          connect: {
+            id: payload.categoryId,
+          },
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } as any,
         title: payload.title,
         logoUrl: payload.logoUrl,
         settings: payload.settings,
@@ -30,12 +38,17 @@ export class TemplatesService {
         permissions: {
           [userId]: [PERMISSIONS.VIEW, PERMISSIONS.EDIT, PERMISSIONS.DELETE],
         },
-        creatorId: userId,
+        creator: {
+          connect: {
+            id: userId,
+          },
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } as any,
       },
     });
 
   public getTemplateDetails = (templateId: number) =>
-    prisma.template.findFirst({ where: { id: templateId } });
+    prisma.template.findFirst({ where: { isValid: false, id: templateId } });
 
   public getAllTemplate = (args: GetTemplateArgs) =>
     prisma.template.findMany({
@@ -49,6 +62,7 @@ export class TemplatesService {
       skip: args.offset,
       take: args.limit,
       where: {
+        isValid: false,
         title: {
           contains: args.searchText,
           mode: 'insensitive',
@@ -102,6 +116,7 @@ export class TemplatesService {
         elements: payload.elements,
         categoryId: payload.categoryId,
         disabled: payload.disabled,
+        isValid: payload.isValid,
         ...(payload.isDelete ? { deleteAt: new Date() } : { deleteAt: null }),
       },
     });

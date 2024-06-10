@@ -70,10 +70,11 @@ model Template {
   createdAt       DateTime         @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt       DateTime?        @updatedAt @map("updated_at") @db.Timestamptz(3)
   deletedAt       DateTime?        @map("deleted_at") @db.Timestamptz(3)
-  creator         User             @relation("CreatedTemplates", fields: [creatorId], references: [id])
-  creatorId       Int              @map("creator_id")
-  categoryId      Int              @map("category_id")
+  creator         User             @relation("CreatedTemplates", fields: [creatorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  creatorId       Int              @default(1) @map("creator_id")
+  categoryId      Int              @default(1) @map("category_id")
   category        CategoryTemplate @relation("CategoryTemplates", fields: [categoryId], references: [id])
+  isValid         Boolean          @default(false)
 
   @@map("templates")
 }
