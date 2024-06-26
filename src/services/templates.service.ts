@@ -115,6 +115,8 @@ export class TemplatesService {
         settings: payload.settings,
         elements: payload.elements,
         description: payload.description,
+        imagePreviewUrl: payload.imagePreviewUrl,
+
         category: {
           connect: {
             id: payload.categoryId,
