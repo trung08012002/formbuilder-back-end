@@ -30,7 +30,7 @@ const options: swaggerJSDoc.Options = {
 };
 const swaggerDocument = swaggerJSDoc(options);
 
-app.use(cors());
+app.use(cors({ origin: 'https://develop--formbuilder2024.netlify.app' }));
 
 app.use(
   ROUTES.API_DOCS.PATH,
