@@ -35,6 +35,7 @@ app.use(
     origin: [
       'https://formbuilder2024.netlify.app',
       'https://develop--formbuilder2024.netlify.app',
+      'http://localhost:5173',
     ],
   }),
 );
