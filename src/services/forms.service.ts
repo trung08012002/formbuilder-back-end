@@ -548,7 +548,7 @@ export class FormsService {
     });
   public importGoogleForms = async (formUrl: string) => {
     const ggFormId = formUrl.split('/')[formUrl.split('/').length - 2];
-
+    console.log('sss', ggFormId);
     const auth = new GoogleAuth({
       keyFile: './src/google_form_api_key.json',
       scopes: [
@@ -557,12 +557,13 @@ export class FormsService {
         'https://www.googleapis.com/auth/forms.currentonly',
       ],
     });
-
+    console.log('auth', auth);
     const forms = google.forms({ version: 'v1', auth: auth });
+    console.log('forms', forms);
     const ggFormRes = await forms.forms.get({
       formId: ggFormId,
     });
-
+    console.log('ggFormRes', ggFormRes);
     const ggForm = ggFormRes.data;
 
     const elements = ggForm.items
