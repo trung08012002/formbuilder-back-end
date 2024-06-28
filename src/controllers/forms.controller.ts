@@ -567,6 +567,7 @@ export class FormsController {
       const mappedForm = await this.formsService.importGoogleForms(formUrl);
       return successResponse(res, mappedForm);
     } catch (error) {
+      console.log('error: ', (error as { message: string }).message);
       return errorResponse(
         res,
         'Use right url google form or use public google form!',
