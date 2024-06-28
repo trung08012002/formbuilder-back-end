@@ -4,6 +4,16 @@ import { GoogleAuth } from 'google-auth-library';
 import { google } from 'googleapis';
 import _omit from 'lodash.omit';
 
+import {
+  CLIENT_EMAIL,
+  CLIENT_ID,
+  PRIVATE_KEY,
+  PRIVATE_KEY_ID,
+  PROJECT_ID,
+  TYPE,
+  UNIVERSE_DOMAIN,
+} from '@/configs/secrets';
+
 import prisma from '../configs/db.config';
 import { TEAM_ERROR_MESSAGES } from '../constants';
 import {
@@ -550,7 +560,15 @@ export class FormsService {
     const ggFormId = formUrl.split('/')[formUrl.split('/').length - 2];
     console.log('sss', ggFormId);
     const auth = new GoogleAuth({
-      keyFile: './src/google_form_api_key.json',
+      credentials: {
+        type: TYPE,
+        project_id: PROJECT_ID,
+        private_key_id: PRIVATE_KEY_ID,
+        private_key: PRIVATE_KEY,
+        client_email: CLIENT_EMAIL,
+        client_id: CLIENT_ID,
+        universe_domain: UNIVERSE_DOMAIN,
+      },
       scopes: [
         'https://www.googleapis.com/auth/forms.body.readonly',
         'https://www.googleapis.com/auth/forms',

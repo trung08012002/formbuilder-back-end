@@ -130,3 +130,4 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
+src/google_form_api_key.json
