@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "omega-booster-424002-c7",
+  "private_key_id": "ecdb20434c50b6dfb84e57fbef489993a62667ba",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCm8dwCf9lb1HGL\nmubyk1f8ZcTPdasEGktCf/gyVnXasydOl0908KdduwZBjMTC1V/8i440NR/sEVe0\ndFGAPtAcM8V9QbTPW8Gqfa82zmlawMM5LH5B6HF0HJikOyT+FQRV/DU4d2bayZOF\nQeXBfU93R3NL4q8v+l+ifDvaS4SrG6qO1SEzf0pU5yHJRgTNGyJ5fVdExe7C1b+6\nV4HeRFJaMeOC/k9Nufpcwtga+ZKWjfE+kC9hd5ZGjGK1e1x4JtO82CJ3zeDRNyyA\n5TMnD7tIhuDMSut6AEbMlpZyWATgQTgH1EaDQqzFzd9FOS6TH5YrO5PEz/gkIuim\nsCZZgIP9AgMBAAECggEABYeV0Lxg2/aPsz7Ufvzr6WeKiw+b9EUVsJRyCWLNQQr1\nlpgS8O3msUdYV/P8cXKlXQVXVrnavpQ9ejPvHicWeBSr6i/yt/qTUd0bYF6aZT/k\nx4BGh1LWbTDkSm5OFZ9nFx0FO0NTNBSAryWFYXEP4ITMmBsgT9/EaqqgReUB9jPk\n7dXclnU83sEYd8soh5Nz16Il/CzAuav+9elXMsKfz55rUMSlhG34YTrndFkAfhth\nVbmg8y8OllIhQnn4UJQnmSaOsWQrzb/rBUxfHSLdghtXUPj6QgJBH1yHEMU7sFYv\nwmlNhgUJ7IH5JM0lapDKE7f8b9wVjS3/5NUTbvc5wQKBgQDZ2VRNuFb+wQE0AKul\ntw0OH4YiQ+7PZJggaC92K4DwmkpBw+3VL8SZ4v1xqRnz+zloQKHxxwkYY+Wxxb3o\nZ+ePmI8xZzqgHCDMnSatBoqLRmoaaoOS1ExkkVxTcGofi2Kdcj9PWNflydanFZNh\nt0XgiAgIpRGqjClOWrYK0jxuwQKBgQDELmDYoeOXQuIZbm3unFoJfdjxkTgxJ7rw\nQyxOyhrofL6/LXt3XbtCUg26vHhrNInRTREoQBDSdOtvj3OI7n4pbHheXSiH+hSp\ngyvEt+NPNFbsnR9ib+ym/I8IoDAPbMPwoiJfhs8kyxhesBmVWNVq7UjPzs9xcXbd\n67+VBcIgPQKBgQCZtF1m+MlotYTDzDVPlvf/Hv7k7klwyukK9HeISOmQ2UvLWxJT\neICekyl/KHDHVFoM1I1uqaAhNVq7M2nqsGURS/K8SLl0fmQl+jtvmU3nNqdmPADZ\neDDuRCGAPbCi0RWjQRiqQ2URHHf3K6HxL/59jX0dnFn6myoJvrbyq6M4AQKBgAdx\n1x0Bb7iSwi/C4AsZBdWsX+oy35YF8vMhKXJH+yNtcHOizzelZ/DJWloGwu8WjFBU\nA12qqLjD1Rdjsze0DTeXNS4njN00IUqZfrS1YbvkuZO7FrDOnIVtuiPSqGA9eWYN\nUQ6c+AlmZ6NYPXBMcbTgEk5Ig9jDPIaJZrjKAiblAoGAfpVFDqyGVAiRj8TpfJRy\nLZ5tFzqUFIjEa83CPZI4/oWm8MFA9k84iMCRBWYrCw/pLi29F87pT+6cd7IdNbrZ\nrBiUbmfPfBHA9dXZ+L02EHdY7dOg4r8bL/odJkMcW07hnJxCiWfdTtfpwOyPZ9Bs\nGtXqK1hC9FeKz39TwR8badI=\n-----END PRIVATE KEY-----\n",
+  "client_email": "import-google-form@omega-booster-424002-c7.iam.gserviceaccount.com",
+  "client_id": "103355407948171310647",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/import-google-form%40omega-booster-424002-c7.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
