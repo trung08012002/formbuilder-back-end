@@ -5,7 +5,7 @@ import { NOT_FOUND } from 'http-status';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 
-import { PORT } from './configs/secrets';
+import { FRONT_END_URL, PORT } from './configs/secrets';
 import authRoute from './routes/auth.routes';
 import foldersRoute from './routes/folders.routes';
 import formsRoute from './routes/forms.routes';
@@ -32,11 +32,7 @@ const swaggerDocument = swaggerJSDoc(options);
 
 app.use(
   cors({
-    origin: [
-      'https://formbuilder2024.netlify.app',
-      'https://develop--formbuilder2024.netlify.app',
-      'http://localhost:5173',
-    ],
+    origin: [FRONT_END_URL],
   }),
 );
 

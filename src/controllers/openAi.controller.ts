@@ -40,6 +40,7 @@ export class OpenAiController {
       });
       return successResponse(res, { elements: content });
     } catch (error: unknown) {
+      console.log(error);
       return errorResponse(res);
     }
   };
