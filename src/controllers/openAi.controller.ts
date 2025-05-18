@@ -38,9 +38,9 @@ export class OpenAiController {
         userPrompt: questions,
         temperature: 0.5,
       });
+
       return successResponse(res, { elements: content });
     } catch (error: unknown) {
-      console.log(error);
       return errorResponse(res);
     }
   };
