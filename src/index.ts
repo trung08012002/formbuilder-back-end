@@ -5,7 +5,7 @@ import { NOT_FOUND } from 'http-status';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 
-import { FRONT_END_URL, PORT } from './configs/secrets';
+import { PORT } from './configs/secrets';
 import authRoute from './routes/auth.routes';
 import foldersRoute from './routes/folders.routes';
 import formsRoute from './routes/forms.routes';
@@ -32,7 +32,7 @@ const swaggerDocument = swaggerJSDoc(options);
 
 app.use(
   cors({
-    origin: [FRONT_END_URL],
+    origin: '*',
   }),
 );
 
