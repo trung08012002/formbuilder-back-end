@@ -39,15 +39,12 @@ export class OpenAiService {
       },
     });
 
-    console.log('full response', completion);
-
     if (isUnexpected(completion)) {
-      console.log('error details', completion.body); // Log the entire body
       throw completion.body?.error || new Error('Unexpected response from API');
     }
 
     const content = completion.body.choices[0].message.content;
-    console.log('content first', content);
+
     let result;
     const match = content?.match(/```json\n([\s\S]*?)\n```/);
     if (match && match[1]) {
